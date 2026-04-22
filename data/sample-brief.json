@@ -1,0 +1,44 @@
+{
+  "fps": 30,
+  "width": 1920,
+  "height": 1080,
+  "slides": [
+    {
+      "kind": "cover",
+      "durationInFrames": 90,
+      "title": "开发者情报 · 每日摘要",
+      "subtitle": "抓取 → 清洗 → JSON → 成片 → 分发",
+      "periodLabel": "2026-04-22",
+      "ttsText": "欢迎收看开发者情报每日摘要。四月二十二日。"
+    },
+    {
+      "kind": "bullets",
+      "durationInFrames": 120,
+      "headline": "今天值得关注的三个信号",
+      "lines": [
+        "Remotion 把「分镜」变成 React 组件，适合批量出片",
+        "结构化 JSON 比长文更稳定，也便于回放与审计",
+        "真正费工的是抓取合规、事实核对与平台上传策略"
+      ],
+      "highlights": ["Remotion", "JSON", "合规"],
+      "ttsText": "今天三个信号：第一，Remotion 把分镜变成 React 组件，适合批量出片。第二，结构化 JSON 更稳定。第三，合规与分发策略往往最费工。"
+    },
+    {
+      "kind": "media",
+      "durationInFrames": 105,
+      "headline": "配图位：远程 URL 会在渲染时拉取",
+      "imageUrl": "https://picsum.photos/seed/intel-brief/1600/900",
+      "caption": "生产环境建议改为自有 CDN 或对象存储链接。",
+      "ttsText": "这一页演示远程配图在渲染时拉取。"
+    },
+    {
+      "kind": "code",
+      "durationInFrames": 120,
+      "headline": "示例：渲染命令（本地 JSON 作为 props）",
+      "language": "bash",
+      "code": "npm run render\n# 等价：remotion render src/index.ts IntelBrief out/brief.mp4 --props=data/sample-brief.json",
+      "highlights": ["remotion", "IntelBrief", "sample-brief.json"],
+      "ttsText": "用 Remotion CLI 把 JSON props 渲染成 MP4。"
+    }
+  ]
+}
