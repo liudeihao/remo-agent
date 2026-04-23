@@ -4,9 +4,10 @@ description: >-
   Authors, validates, or explains JSON video plans (VideoPlanProps) for the remo-agent Remotion
   project—slide kinds, on-screen copy, ttsText, fps/dimensions, and props files. Triggers: video plan
   JSON, sample-video-plan, props for VideoFromPlan, "slides" schema, ttsText per scene, on-screen
-  headline/bullets/code/image, projects/slug plan.json and meta.json. Does not cover new Remotion
-  components or new kind values; use remo-agent-slide-components for that.
-version: 0.2.1
+  headline/bullets/code/image, projects/slug plan.json and meta.json (Chinese 标题/简介 for CN
+  publishing). Does not cover new Remotion components or new kind values; use
+  remo-agent-slide-components for that.
+version: 0.2.2
 metadata:
   project: remo-agent
 ---
@@ -17,6 +18,12 @@ metadata:
 
 - **In scope**: structured data that drives `VideoFromPlan`—conformant JSON, field semantics, choice of `kind` from the **current** `PlanSlide` union, and copy for display / `ttsText` for downstream TTS.
 - **Out of scope**: TSX, `slideRegistry`, new `kind` discriminants, Remotion Studio, and `remotion` CLI. Those belong to other skills in this set. (`VideoProjectMeta` in `meta.json` is described here; Remotion does not read that file.)
+
+### `meta.json` title / description (language)
+
+- `title` and `description` are **human-facing** strings for 成片标题 / 平台简介 / 归档说明，**不**进 Remotion。
+- **Content language** follows the user and the target platform (e.g. **Simplified Chinese** 标题 + 长简介 for 国内); bilingual is fine if the user asks. **JSON keys** remain English (`title`, `description`, `slug`) for tooling.
+- When the user writes in Chinese or targets Chinese platforms, the agent should **同时产出中文标题与中文简介** in `meta.json` alongside `plan.json`, unless they specify another language. See [references/project-layout.md](references/project-layout.md) and `projects/README.md`.
 
 ## Skill map (this repository)
 
@@ -70,7 +77,7 @@ Before sharing or committing a plan file:
 - [ ] Every slide has `kind`, `durationInFrames`, and fields required for that `kind` per [references/slide-kinds.md](references/slide-kinds.md).
 - [ ] Remote `imageUrl` values are reachable HTTPS URLs the render environment can fetch, or the user accepts render-time failure.
 - [ ] Sum of `durationInFrames` matches the intended run time (optional sanity: total frames / fps ≈ seconds).
-- [ ] If using `projects/<slug>/`, `meta.json` includes `title`, `description`, and `slug === "<slug>"`.
+- [ ] If using `projects/<slug>/`, `meta.json` includes `title`, `description`, and `slug === "<slug>"` — and **title/description** use the **intended display language** (e.g. 中文标题与简介 for Chinese deliverables), not empty English placeholders.
 
 ## Failure modes
 

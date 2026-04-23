@@ -42,11 +42,11 @@ npm run render:project -- my-video-slug
 - 主类型：`VideoPlanProps`（`src/types/videoPlan.ts`）。
 - 顶层：`fps`、`width`、`height`（可选）、`slides[]`、可选 `narrationAudioUrl`（整段旁白，HTTPS 或 `file:`）。
 - 每页 `slide`：必有 `kind`、`durationInFrames`；可选 `ttsText`（给上游 TTS 用，成片可不内嵌 TTS）。
-- `kind`：`cover` | `bullets` | `media` | `code`（字段见类型）。
+- `kind`：`cover` | `bullets` | `media` | `code` | `rampBounce`（字段见类型与 `slideRegistry` 中的 `SLIDE_CATALOG`）。
 
 示例：`data/sample-video-plan.json`。
 
-- 平台用**标题/长描述**：放在 `projects/<slug>/meta.json`（类型 `VideoProjectMeta`），**不**传给 Remotion；成片元数据与 `plan.json` 分离，避免和某页 `title` 混淆。
+- 平台用**标题/长描述**：放在 `projects/<slug>/meta.json`（类型 `VideoProjectMeta`），**不**传给 Remotion；`title` / `description` 的**正文语言**按发布场景书写（**中文标题 + 中文简介**为国内默认），键名仍为英文。成片元数据与 `plan.json` 分离，避免和某页 `title` 混淆。
 
 ## Remotion 扩展方式（通用、可复用）
 

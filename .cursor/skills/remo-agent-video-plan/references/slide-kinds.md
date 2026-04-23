@@ -6,7 +6,7 @@
 
 | Field | Type | Required | Notes |
 |-------|------|----------|--------|
-| `kind` | string (discriminant) | yes | One of: `cover`, `bullets`, `media`, `code` |
+| `kind` | string (discriminant) | yes | One of: `cover`, `bullets`, `media`, `code`, `rampBounce` |
 | `durationInFrames` | number | yes | Integer ≥ 1. Total duration = sum over `slides` |
 | `ttsText` | string | no | Spoken script for external TTS; not rendered on screen |
 
@@ -55,3 +55,9 @@
 | `headline` | no |
 | `language` | no | Shown as a badge; not a highlighter id |
 | `highlights` | no | Substrings in `code` to tint |
+
+### `kind: "rampBounce"`
+
+| Field | Required | Notes |
+|-------|----------|--------|
+| `subtitleCues` | yes (non-empty) | `SubtitleCue[]`: burn-in captions; `startFrame`/`endFrame` **relative to this slide** (0 = slide start). For sync with motion, keep cues inside `[0, durationInFrames-1]`. |

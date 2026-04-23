@@ -6,7 +6,7 @@
 
 | Path | Content |
 |------|---------|
-| `projects/<slug>/meta.json` | `VideoProjectMeta` — `title`, `description`, `slug` (publishing / archive). **Not** Remotion input. |
+| `projects/<slug>/meta.json` | `VideoProjectMeta` — `title`, `description`, `slug` (publishing / archive). **Not** Remotion input. **Language**: `title` and `description` are human-facing strings—use the user’s **locale for titles/简介** (e.g. **Simplified Chinese** for 国内平台) unless they ask otherwise. JSON keys stay English. |
 | `projects/<slug>/plan.json` | **Only** this file (under that folder) is `VideoPlanProps` for `--props`. |
 | `projects/<slug>/out/video.mp4` | Default render output when using `npm run render:project -- <slug>`. |
 | Ad-hoc | TTS takes, `notes.md`, cover art — optional; do not clobber the three paths above. |

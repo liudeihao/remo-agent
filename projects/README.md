@@ -13,9 +13,15 @@
 | 其他              | 可放 TTS 中间文件、旁白 `wav`、封面图、**notes.md** 等；命名自定，但勿与下两项冲突。         |
 
 
-## 类型
+## 类型与语言
 
 - `meta.json` 的 TypeScript 类型为 `VideoProjectMeta`（见 `src/types/videoProjectMeta.ts`）。
+- `**title` / `description` 的文案语言**：与 Remotion/代码无关，按**发布平台与观众**书写即可；在中文场景下应同时产出 **中文视频标题** 与 **中文简介**（或中英双语，由你方规范）。JSON 的**键名**仍为英文，便于程序读取。
+- `**slug`**：目录名，建议仍用 `kebab-case` **ASCII**（如 `my-topic`），避免部分工具对路径字符的限制。
+
+## Agent / Skill
+
+- 在 `remo-agent-video-plan` 与 `references/project-layout.md` 中约定：新建 `projects/<slug>/` 时，应**写入或更新** `meta.json` 的 `title`、`description`（与 `plan.json` 同步交付）；若用户语言为中文，**默认**填写中文标题与简介。
 
 ## 渲染
 

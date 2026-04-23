@@ -3,6 +3,7 @@ import { BulletsSlideView } from "./components/BulletsSlideView";
 import { CodeSlideView } from "./components/CodeSlideView";
 import { CoverSlideView } from "./components/CoverSlideView";
 import { MediaSlideView } from "./components/MediaSlideView";
+import { RampBounceSlideView } from "./components/RampBounceSlideView";
 import type { PlanSlide, SlideKind } from "./types/videoPlan";
 
 function assertNever(x: never): never {
@@ -38,6 +39,12 @@ export const SLIDE_CATALOG: ReadonlyArray<{
     label: "Code",
     description: "Headline, language badge, monospace block with token highlights",
   },
+  {
+    kind: "rampBounce",
+    label: "Ramp + ball + spring",
+    description:
+      "2D ball rolls down a ramp, hits a spring, bounces; optional timed subtitleCues (burn-in)",
+  },
 ] as const;
 
 /**
@@ -54,6 +61,8 @@ export function renderSlideContent(slide: PlanSlide): React.ReactNode {
       return <MediaSlideView slide={slide} />;
     case "code":
       return <CodeSlideView slide={slide} />;
+    case "rampBounce":
+      return <RampBounceSlideView slide={slide} />;
     default:
       return assertNever(slide);
   }

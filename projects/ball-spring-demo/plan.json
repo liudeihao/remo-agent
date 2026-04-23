@@ -1,0 +1,34 @@
+{
+  "fps": 30,
+  "width": 1920,
+  "height": 1080,
+  "slides": [
+    {
+      "kind": "rampBounce",
+      "durationInFrames": 240,
+      "subtitleCues": [
+        {
+          "startFrame": 0,
+          "endFrame": 45,
+          "text": "【字幕】小球置于斜面顶端，准备沿斜面滚下。"
+        },
+        {
+          "startFrame": 46,
+          "endFrame": 94,
+          "text": "【字幕】小球在斜面上加速滑向底端（示意）。"
+        },
+        {
+          "startFrame": 95,
+          "endFrame": 125,
+          "text": "【字幕】到达底端，接触弹簧并被压缩——画面应与本句同时出现。"
+        },
+        {
+          "startFrame": 126,
+          "endFrame": 239,
+          "text": "【字幕】弹簧回弹，小球被弹起——观察弹跳高度与字幕后半段是否一致。"
+        }
+      ],
+      "ttsText": "（本演示不生成语音，仅烧录字幕与画面。）"
+    }
+  ]
+}
