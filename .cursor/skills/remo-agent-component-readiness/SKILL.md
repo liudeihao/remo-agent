@@ -6,8 +6,8 @@ description: >-
   dedicated views. Forbids hacking existing components and force-fitting the wrong primitive.
   Triggers: new slide kind, missing SlideView, video-plan or render work that implies new visuals,
   组件先行, before Remotion, 不要凑合, 不要魔改. Pairs with remo-agent-slide-components; precedes
-  remo-agent-video-plan / remo-agent-remotion-render.
-version: 0.1.1
+  remo-agent-video-plan / remo-agent-remotion-render. Counters over-reuse and “JSON-only new look.”
+version: 0.1.2
 metadata:
   project: remo-agent
 ---
@@ -40,6 +40,11 @@ Ship **honest** presentation code: the right building blocks exist **before** he
 | **No force-fit** | If the closest component is “almost” right but teaches the **wrong relationship** or layout role, **do not** use it. Add the correct component. |
 | **No hack / 魔改** | Do not bolt one-off behavior onto unrelated shared views, explode props, or branch on video-specific hacks inside generic components. Prefer a **new** named view or a **small** shared primitive used by both. |
 | **Reuse bar** | Reuse is allowed only when **semantics and motion contract** already match (same as slide-components **semantics before reuse**). “Saves typing” is never sufficient. |
+
+## Anti-lazy reuse (models over-default to “use what exists”)
+
+- **New effect / new hero look** → default path is **new or extended presentation code** (primitive, `SlideView`, or honest new `kind`), not “tune JSON under the nearest old kind.”
+- If you choose reuse, **say one sentence why** both meaning and motion already match. If you cannot, **build instead**.
 
 ## Quality gate (before Remotion-heavy work)
 

@@ -4,8 +4,8 @@ description: >-
   **RADICAL / NOT CONSERVATIVE.** *SlideView code owns scale & motion. Default: HERO SIZES, strong
   springs, continuous idle motion, camera move on media, scan/glow on code. "Looks like PPT" = BUG
   in this layer until proven user asked 极简. Reuse only when **semantics** match; new primitive/slide
-  when meaning diverges. v0.4.1
-version: 0.4.1
+  when meaning diverges. New user-requested visuals default to NEW implementation; reuse requires explicit fit proof. v0.4.2
+version: 0.4.2
 metadata:
   project: remo-agent
 ---
@@ -44,6 +44,7 @@ If the user’s video still feels like PowerPoint, **the code is where you fix i
 
 ## Component reuse: semantics, not “one shell for everything”
 
+- **Invert the lazy default:** Agents often reuse to save effort. Here the default is the opposite: for a **new** topic, mood, or requested **look**, assume you need **new** motion/layout/code until you have checked semantics **and** motion contract. “We can probably drive it with JSON in `kineticText`” is **not** enough if the **stock** view does not already deliver that **look**.
 - **Reusable** here means: **stable, honest abstractions** (e.g. a directed edge primitive with real arrow semantics in SVG), composed as needed. Different videos will still need **different** slides and sometimes **new** building blocks.
 - **Reuse** when: behavior and **meaning** line up (same kind of edge, same layout role, same motion contract).
 - **New component** when: the **meaning** changes—even if the old one “almost” fits. Examples: undirected relationship vs A→B flow; need for bezier vs straight; label placement rules that are not a thin variant.

@@ -1,0 +1,126 @@
+{
+  "fps": 30,
+  "width": 1920,
+  "height": 1080,
+  "slides": [
+    {
+      "kind": "cover",
+      "durationInFrames": 132,
+      "title": "认识 shadcn/ui",
+      "subtitle": "把可访问的组件源码放进你的项目，而不是多装一层摸不着的黑盒",
+      "periodLabel": "前端",
+      "brandFooter": "remo-agent · explainer",
+      "ttsText": "这卷用动效讲清 shadcn/ui：它是什么、和 Radix 与 Tailwind 的关系，以及为什么团队会选它。",
+      "videoSubtitle": "shadcn/ui：源码进仓的组件工作流"
+    },
+    {
+      "kind": "explainerGraph",
+      "durationInFrames": 260,
+      "title": "一句话：设计系统思维 + 工具链，把成品落到「你的仓库」",
+      "nodes": [
+        { "id": "idea", "x": 0.22, "y": 0.48, "iconId": "light", "shortLabel": "体验与规范" },
+        { "id": "cli", "x": 0.52, "y": 0.36, "iconId": "cogs", "shortLabel": "CLI 管道" },
+        { "id": "src", "x": 0.78, "y": 0.52, "iconId": "paper", "shortLabel": "你的源码树" }
+      ],
+      "edges": [
+        { "from": "idea", "to": "cli", "label": "选件 / 预设" },
+        { "from": "cli", "to": "src", "label": "写入项目" }
+      ],
+      "revealStaggerFrames": 11,
+      "outroFadeFrames": 18,
+      "ttsText": "先摆关系：脑子里是设计系统，手上是 CLI，落点是仓库里真实存在的组件文件。",
+      "videoSubtitle": "想法 → CLI → 源码：一条链讲完定位"
+    },
+    {
+      "kind": "kineticText",
+      "durationInFrames": 220,
+      "title": "技术栈拼图",
+      "lines": [
+        "交互层多来自 **Radix**：焦点、键盘、屏幕阅读器语义，开箱更稳。",
+        "样式层走 **Tailwind**：用语义 token（如 primary）而不是满屏魔法色值。",
+        "交付形态是 **源码文件**：你能读 diff、能改、能按团队规范再封装。"
+      ],
+      "contentArc": "setup",
+      "staggerFrames": 6,
+      "highlights": ["Radix", "Tailwind", "源码文件"],
+      "outroFadeFrames": 16,
+      "ttsText": "把它拆成三块：Radix 管交互语义，Tailwind 管排版与令牌，最后落到可复制可改的源码。",
+      "videoSubtitle": "Radix + Tailwind + 源码：各管一摊"
+    },
+    {
+      "kind": "explainerGraph",
+      "durationInFrames": 270,
+      "title": "和「装一个 UI 包」有什么不一样？",
+      "nodes": [
+        { "id": "pkg", "x": 0.24, "y": 0.42, "iconId": "cogs", "shortLabel": "npm 包" },
+        { "id": "boundary", "x": 0.5, "y": 0.55, "iconId": "scales", "shortLabel": "边界 / 版本" },
+        { "id": "owned", "x": 0.76, "y": 0.42, "iconId": "building", "shortLabel": "项目内组件" }
+      ],
+      "edges": [
+        { "from": "pkg", "to": "boundary", "label": "升级耦合" },
+        { "from": "boundary", "to": "owned", "label": "你说了算" }
+      ],
+      "revealStaggerFrames": 10,
+      "outroFadeFrames": 18,
+      "ttsText": "传统 UI 包像黑盒：版本一升，样式和行为都可能被动漂移。shadcn 把代码放进你的树里，边界由你画。",
+      "videoSubtitle": "黑盒依赖 vs 仓内自有组件"
+    },
+    {
+      "kind": "code",
+      "durationInFrames": 300,
+      "headline": "上手：用官方 CLI 把组件「种」进仓库",
+      "language": "bash",
+      "code": "# 初始化设计令牌与结构（按框架向导选择）\nnpx shadcn@latest init\n\n# 按需拉取单个组件源码\nnpx shadcn@latest add button\nnpx shadcn@latest add card dialog",
+      "highlights": ["shadcn@latest", "init", "add button"],
+      "outroFadeFrames": 14,
+      "ttsText": "终端里 init 一次，之后 add 组件名，就会把对应源码和依赖写进你的项目结构。",
+      "videoSubtitle": "npx shadcn@latest init / add …"
+    },
+    {
+      "kind": "kineticText",
+      "durationInFrames": 240,
+      "title": "机制链：为什么团队会认真考虑它",
+      "lines": [
+        "**源码** 在仓里：Code Review 能审到真正的 JSX 与样式。",
+        "**可组合**：复杂界面是卡片、表格、对话框的拼装，而不是一次 import 全家桶。",
+        "**演进** 跟你的分支走：发版节奏不再被上游小版本绑死。"
+      ],
+      "contentArc": "mechanism",
+      "staggerFrames": 7,
+      "highlights": ["源码", "可组合", "演进"],
+      "outroFadeFrames": 16,
+      "ttsText": "三条硬理由：审得到、拼得起、版本跟你们走。",
+      "videoSubtitle": "可审 / 可拼 / 版本自主"
+    },
+    {
+      "kind": "kineticText",
+      "durationInFrames": 210,
+      "title": "诚实收尾",
+      "lines": [
+        "它不是银弹：你仍要约定 **Tailwind 令牌**、表单模式和无障碍细节。",
+        "但它的赌注很清楚——用 **工程可控性** 换长期迭代的心安。"
+      ],
+      "contentArc": "dialectic",
+      "staggerFrames": 6,
+      "highlights": ["Tailwind 令牌", "工程可控性"],
+      "outroFadeFrames": 20,
+      "ttsText": "最后别神话它：令牌和 a11y 仍是团队功课；它的价值是把 UI 从神秘依赖变成普通代码资产。",
+      "videoSubtitle": "可控性来自「代码在你手里」"
+    },
+    {
+      "kind": "kineticText",
+      "durationInFrames": 190,
+      "title": "下一步你可以…",
+      "lines": [
+        "打开 **ui.shadcn.com** 看文档与示例，按项目栈跑一遍 init。",
+        "用 **add** 拉一两个真实业务组件，走一次从 Figma 到 PR 的闭环。"
+      ],
+      "contentArc": "application",
+      "staggerFrames": 7,
+      "highlights": ["ui.shadcn.com", "add"],
+      "outroFadeFrames": 24,
+      "ttsText": "去官网读文档，再在分支里 add 一两个件，让团队感受 diff 里到底多了什么。",
+      "videoSubtitle": "文档 + 一条小 PR 最有说服力"
+    }
+  ]
+}

@@ -11,6 +11,8 @@ For **project-owned slides and Remotion visuals** (not npm library choice—see 
 
 - **Default order:** inventory required views → implement or add dedicated `*SlideView` / primitives → types, `slideRegistry`, catalog → **then** `VideoPlan` JSON and Remotion wiring. Do **not** start from plan-only or composition-only hacks when views are missing or semantically wrong.
 - **Reuse:** only when semantics and motion contract **fully** match an existing component. Never reuse to save typing when meaning differs.
+- **New look / new effect (default = build):** If the user wants a **visibly new** metaphor, layout, graph geometry, camera beat, or hero treatment that is **not** already the honest stock behavior of an existing `kind`, **implement** a dedicated view or primitive (or a clearly named new `kind`) **first**. Treat “only change `plan.json` under an old kind” as the **exception**, not the opening move, and only when the fit is provable.
+- **Burden of proof on reuse:** Before reusing, state in one line **why** semantics **and** motion contract match. If you cannot, **do not reuse**—add code.
 - **Forbidden:** force-fitting the wrong primitive; one-off props/modes that smuggle a different meaning; editing unrelated shared components to serve a single video.
 
 Full checklist and gates: read `.cursor/skills/remo-agent-component-readiness/SKILL.md` when doing new slide kinds or visual work.
