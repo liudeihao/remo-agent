@@ -1,13 +1,13 @@
 ---
 name: remo-agent-component-readiness
 description: >-
-  Workflow: prepare slide/presentation components before Remotion composition and plan wiring.
-  Reuse only when semantics fully match; otherwise implement dedicated views. Forbids hacking
-  existing components and forbids force-fitting the wrong primitive to avoid work. Triggers:
-  组件先行, before Remotion, component inventory, no reuse without fit, 不要凑合, 不要魔改,
-  new slide kind, missing SlideView. Pairs with remo-agent-slide-components (how views behave)
-  and precedes remo-agent-video-plan / remo-agent-remotion-render for new visual work.
-version: 0.1.0
+  Default remo-agent workflow (user need not ask): prepare slide/presentation components before
+  Remotion composition and plan wiring. Reuse only when semantics fully match; otherwise implement
+  dedicated views. Forbids hacking existing components and force-fitting the wrong primitive.
+  Triggers: new slide kind, missing SlideView, video-plan or render work that implies new visuals,
+  组件先行, before Remotion, 不要凑合, 不要魔改. Pairs with remo-agent-slide-components; precedes
+  remo-agent-video-plan / remo-agent-remotion-render.
+version: 0.1.1
 metadata:
   project: remo-agent
 ---
@@ -18,10 +18,12 @@ metadata:
 
 Ship **honest** presentation code: the right building blocks exist **before** heavy `VideoFromPlan` / timeline work. **Libraries** for domains (parsing, auth, math) still follow `.cursor/rules/prefer-existing-solutions.mdc`; this skill governs **project-owned slide views and primitives**, not npm shopping.
 
+**Project default:** `.cursor/rules/component-first-default.mdc` (`alwaysApply: true`) makes this order binding for remo-agent presentation work—you do **not** need the user to say “组件先行” each time. Read this skill when the task touches new or changed slide visuals.
+
 ## When to use
 
-- Starting a new video line, new `kind`, or any work where the agent might reach for Remotion or plan JSON first.
-- User asks for 组件先行, 先组件后 Remotion, or explicitly rejects 凑合 / 魔改.
+- **Always** for a new `kind`, new/changed `SlideView`, or any task that would otherwise lean on plan JSON / Remotion first while views are missing or a poor semantic fit.
+- User explicitly narrows scope (e.g. “only fix JSON”)—then follow their scope, but do not use that as an excuse to force-fit components.
 
 ## Workflow (order matters)
 

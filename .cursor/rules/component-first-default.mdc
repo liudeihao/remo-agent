@@ -1,0 +1,16 @@
+---
+description: >-
+  Default remo-agent workflow for presentation work components before Remotion/plan; no force-fit
+  reuse and no hacking shared slide views. Applies to new kinds, SlideView, and video visuals.
+alwaysApply: true
+---
+
+# Component-first (default)
+
+For **project-owned slides and Remotion visuals** (not npm library choice—see `prefer-existing-solutions.mdc`):
+
+- **Default order:** inventory required views → implement or add dedicated `*SlideView` / primitives → types, `slideRegistry`, catalog → **then** `VideoPlan` JSON and Remotion wiring. Do **not** start from plan-only or composition-only hacks when views are missing or semantically wrong.
+- **Reuse:** only when semantics and motion contract **fully** match an existing component. Never reuse to save typing when meaning differs.
+- **Forbidden:** force-fitting the wrong primitive; one-off props/modes that smuggle a different meaning; editing unrelated shared components to serve a single video.
+
+Full checklist and gates: read `.cursor/skills/remo-agent-component-readiness/SKILL.md` when doing new slide kinds or visual work.
