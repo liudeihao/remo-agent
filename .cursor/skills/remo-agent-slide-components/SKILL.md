@@ -3,9 +3,10 @@ name: remo-agent-slide-components
 description: >-
   Extends or maintains Remotion slide UI in remo-agent: new PlanSlide kinds, *SlideView components,
   SLIDE_CATALOG, and renderSlideContent in slideRegistry. Triggers: new slide type, new kind, edit
-  CoverSlideView, slideRegistry, videoPlan types, "add a layout", reusable Remotion slide. Does not
+  CoverSlideView, slideRegistry, videoPlan types, "add a layout", reusable Remotion slide. Kinetic
+  motion and visuals must follow **text-first** semantics (see Core principles in body). Does not
   author JSON plans (remo-agent-video-plan) or run CLI render (remo-agent-remotion-render).
-version: 0.2.0
+version: 0.2.1
 metadata:
   project: remo-agent
 ---
@@ -16,6 +17,13 @@ metadata:
 
 - **In scope**: TypeScript/React that renders each `PlanSlide` variant, the registry that maps `kind` → component, and `SLIDE_CATALOG` metadata for discoverability. Shared chrome (`SlideChrome`, `src/lib/*`) and entrance motion used by multiple views.
 - **Out of scope**: contents of `VideoPlanProps` JSON files, `remotion render` invocation, and TTS providers.
+
+## Core principles (motion & presentation)
+
+Implementation must follow the same **text-first** rule as `remo-agent-video-plan` (see its **Core principles (motion & narrative)**).
+
+- **Semantics drive the pixels**: In `*SlideView` and shared motion (e.g. `src/lib/kineticArc.ts`, `KineticTextSlideView`, `semanticLine` / `semanticIcons`), new timing, easings, layout modes, and icon behavior must be **grounded in what the line is doing** in the story (e.g. tension, chain of causes, head-to-head contrast, metaphor). **Do not** add or reuse a “spicy” animation on unrelated copy just because it is available.
+- **Plan contract**: Views implement what `VideoPlanProps` and types describe. New motion or visual modes require **type + registry +** `remo-agent-video-plan` [references/slide-kinds.md](../remo-agent-video-plan/references/slide-kinds.md) updates; they are not a side channel for authorless spectacle.
 
 ## Position in the pipeline
 
@@ -57,6 +65,7 @@ metadata:
 - [ ] New `kind` appears in: `videoPlan.ts`, new `*SlideView`, `slideRegistry.tsx` (both catalog and switch), and [slide-kinds.md](../remo-agent-video-plan/references/slide-kinds.md) if public contract changed.
 - [ ] No new `if (slide.kind)` chain inside `VideoFromPlan` for production slide types.
 - [ ] Slide components remain **presentational** (no fetches, no secrets, no TTS calls).
+- [ ] Motion or kinetic UI changes **serve on-screen meaning**; align with the **text-first** rule in `remo-agent-video-plan` (no spectacle that the copy does not support).
 
 ## Failure modes
 

@@ -5,9 +5,10 @@ description: >-
   project—slide kinds, on-screen copy, ttsText, fps/dimensions, and props files. Triggers: video plan
   JSON, sample-video-plan, props for VideoFromPlan, "slides" schema, ttsText per scene, on-screen
   headline/bullets/code/image, projects/slug plan.json and meta.json (Chinese 标题/简介 for CN
-  publishing). Does not cover new Remotion components or new kind values; use
-  remo-agent-slide-components for that.
-version: 0.2.2
+  publishing). Motion and kinetic fields must follow **text-first** narrative intent (see Core principles
+  in body). Does not cover new Remotion components or new kind values; use remo-agent-slide-components
+  for that.
+version: 0.2.3
 metadata:
   project: remo-agent
 ---
@@ -60,6 +61,16 @@ Apply this skill when the task involves any of:
 | Per-video folder convention | [references/project-layout.md](references/project-layout.md) and `projects/README.md` |
 | Sidecar metadata type | `src/types/videoProjectMeta.ts` (`VideoProjectMeta` for `meta.json`) |
 
+## Core principles (motion & narrative)
+
+This repo treats **on-screen text and story beats** as the source of truth. Motion in the plan is **not** free decoration.
+
+- **Meaning first, motion second**: `durationInFrames`, `kineticText` fields (`contentArc`, `lineAnimation`, `staggerFrames`, `highlights`), and copy splits must **serve what the segment says** and its role in the arc (setup, pressure, rebuttal, closing, etc.). **Do not** pick arcs, line animations, or highlight phrases to “look cool” or to pad time if they **distract from** or **mis-state** the argument.
+- **No animation for its own sake**: If a beat is explanatory or delicate, prefer calmer `contentArc` / pacing over flashy defaults. Spectacle is allowed only when the **content** calls for stress, contrast, or closure—not by habit.
+- **Explicit `lineAnimation` only**: If you set `lineAnimation` without `contentArc`, still **justify** the choice from the line’s function in the story. Random or default-only motion is a plan smell.
+
+Authoring and reviewing agents should hold each other to this: **understand the text, then choose the motion.**
+
 ## Workflow
 
 1. **Gather intent** — topic, target length (slide count or total duration in frames if fixed), language for on-screen text, whether `ttsText` is needed, **publishing title/description** (goes in `meta.json` when using a project directory).
@@ -78,6 +89,7 @@ Before sharing or committing a plan file:
 - [ ] Remote `imageUrl` values are reachable HTTPS URLs the render environment can fetch, or the user accepts render-time failure.
 - [ ] Sum of `durationInFrames` matches the intended run time (optional sanity: total frames / fps ≈ seconds).
 - [ ] If using `projects/<slug>/`, `meta.json` includes `title`, `description`, and `slug === "<slug>"` — and **title/description** use the **intended display language** (e.g. 中文标题与简介 for Chinese deliverables), not empty English placeholders.
+- [ ] For `kind: "kineticText"`, `contentArc` (or, if used alone, `lineAnimation`) and `highlights` **match the narrative job** of that beat—**not** decoration for its own sake (see **Core principles** above).
 
 ## Failure modes
 

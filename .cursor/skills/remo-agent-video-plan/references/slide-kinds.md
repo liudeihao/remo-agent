@@ -58,6 +58,8 @@
 
 ### `kind: "kineticText"`（科普/动效字）
 
+**原则**：动效、叙事弧、高亮词须**由文案与分镜在故事里的作用**反推，**不得**为炫技而堆动画。详见本仓库 `remo-agent-video-plan` Skill 中的 *Core principles (motion & narrative)*。
+
 | Field | Required | Notes |
 |-------|----------|--------|
 | `title` | no | 可选；先于正文入场 |
