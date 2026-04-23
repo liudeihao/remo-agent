@@ -73,6 +73,7 @@ metadata:
 
 ## Related skills
 
+- `remo-agent-component-readiness` — confirm slide views exist and fit **before** leaning on render/plan edits
 - `remo-agent-video-plan` — `VideoFromPlan` props
 - `remo-agent-slide-components` — if failure is from missing/buggy view code
 - `remo-agent-narration-tts` — if only audio is wrong

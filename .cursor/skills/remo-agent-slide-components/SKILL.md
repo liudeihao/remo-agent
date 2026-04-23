@@ -116,5 +116,6 @@ If the user’s video still feels like PowerPoint, **the code is where you fix i
 
 ## Related
 
+- `remo-agent-component-readiness` — **order of work**: components before Remotion/plan; no force-fit / no hack
 - `remo-agent-video-plan` — **RADICAL** data bias
 - `remo-agent-remotion-render` — output MP4

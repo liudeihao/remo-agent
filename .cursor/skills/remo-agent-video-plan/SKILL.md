@@ -138,4 +138,5 @@ metadata:
 
 ## Related
 
+- `remo-agent-component-readiness` — implement or confirm matching views **before** stretching plan JSON around missing semantics
 - `remo-agent-slide-components` — **bigger, faster, loopier** defaults
