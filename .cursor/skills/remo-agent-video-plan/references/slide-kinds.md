@@ -64,8 +64,8 @@
 | Field | Required | Notes |
 |-------|----------|--------|
 | `title` | no | 可选 |
-| `nodes` | yes | 每项：`id`, `x`, `y` (0–1 中心在图区内), 可选 `imageUrl` 或 `iconId`（`semanticIcons` 中的 id，无图时大图标）, 可选 `shortLabel` |
-| `edges` | yes (可为 `[]`) | `from` / `to` 为 `node.id`；可选 `label` 显示在边中点附近 |
+| `nodes` | yes | 每项：`id`, `x`, `y` (0–1，**节点卡片中心**在**正方形**图区内的归一化坐标，与 `ExplainerGraphSlideView` 的 SVG/叠层同域，勿混用与容器 letterbox 不一致的坐标的含义), 可选 `imageUrl` 或 `iconId`（`semanticIcons` 中的 id，无图时大图标）, 可选 `shortLabel` |
+| `edges` | yes (可为 `[]`) | `from` / `to` 为 `node.id`；可选 `label` 显示在边中点附近。可选 `lineTrackWidth` / `lineAccentWidth` / `arrowHeadSize`（与图 `viewBox` 0–1000 同度量的用户单位）/ `showLineTrack` 控制有向边外观；省略则用 `ExplainerGraphSlideView` 默认。 |
 | `revealStaggerFrames` | no | 节点依次入场间隔，默认 12 |
 | `outroFadeFrames` | no | 同其他 kind |
 

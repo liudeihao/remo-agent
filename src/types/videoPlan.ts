@@ -75,7 +75,9 @@ export type KineticTextSlide = SlideBase & {
 };
 
 /**
- * 图优先科普：能画出来的概念用图节点，关系用边；x/y 为图区内归一化中心 (0–1)。
+ * 图优先科普：能画出来的概念用图节点，关系用边。
+ * `x` / `y`：节点**卡片中心**在**图区正方形画布**上的归一化坐标 (0–1)，与 `ExplainerGraphSlideView` 里 SVG
+ * `viewBox` 0–1000 及 HTML 层叠节点共用同一域（无 letterbox/两套坐标时才能对齐到边的锚点）。
  */
 export type ExplainerGraphNode = {
   id: string;
@@ -92,6 +94,16 @@ export type ExplainerGraphEdge = {
   from: string;
   to: string;
   label?: string;
+  /**
+   * Optional SVG user-space (same as graph `viewBox` 0–1000) stroke widths / arrow. Omit to use
+   * `ExplainerGraphSlideView` defaults.
+   */
+  lineTrackWidth?: number;
+  lineAccentWidth?: number;
+  /** Tip scale in the same user units as the canvas (0–1000 field). */
+  arrowHeadSize?: number;
+  /** `false` = single stroke (accent only), no under-glow track. */
+  showLineTrack?: boolean;
 };
 
 export type ExplainerGraphSlide = SlideBase & {

@@ -1,17 +1,18 @@
-import React, { useMemo } from "react";
+import React, { useLayoutEffect, useMemo, useRef, useState } from "react";
 import { Img, interpolate, spring, useCurrentFrame, useVideoConfig } from "remotion";
 import { SemanticIconById, type SemanticIconName } from "../lib/semanticIcons";
 import type { ExplainerGraphSlide } from "../types/videoPlan";
-import { DiagramArrowheadMarker, DirectedArrowEdgeSvg } from "./diagram/DirectedArrowEdgeSvg";
+import { DirectedArrowEdgeSvg } from "./diagram/DirectedArrowEdgeSvg";
 import { slideChrome, SlideChrome } from "./SlideChrome";
-
-const EXPLAINER_GRAPH_ARROW_MARKER = "remoExplainerGraphArrow";
 
 /** Fills frame — graph is the hero, not a PPT inset */
 const GRAPH_MIN_H = 680;
 const NODE_CARD_W = 320;
+/** Match `minHeight: NODE_CARD_W * 0.95` on the card for shorten math */
+const NODE_EST_H = NODE_CARD_W * 0.95;
 const ICON_BOX = 220;
 const ICON_SIZE = 170;
+const VIEW = 1000;
 
 function nodeVisualId(n: { imageUrl?: string; iconId?: SemanticIconName }): SemanticIconName {
   if (n.imageUrl) {
@@ -57,8 +58,8 @@ export const ExplainerGraphSlideView: React.FC<{
 
   const layout = useMemo(() => {
     return nodes.map((n) => ({
-      x: Math.min(0.97, Math.max(0.03, n.x)) * 1000,
-      y: Math.min(0.97, Math.max(0.03, n.y)) * 1000,
+      x: Math.min(0.97, Math.max(0.03, n.x)) * VIEW,
+      y: Math.min(0.97, Math.max(0.03, n.y)) * VIEW,
     }));
   }, [nodes]);
 
@@ -70,6 +71,33 @@ export const ExplainerGraphSlideView: React.FC<{
     to: 0,
   });
   const titleOp = interpolate(frame, [0, 14], [0, 1], { extrapolateRight: "clamp" });
+
+  const graphRowRef = useRef<HTMLDivElement>(null);
+  const [sidePx, setSidePx] = useState(800);
+  useLayoutEffect(() => {
+    const row = graphRowRef.current;
+    if (!row) {
+      return;
+    }
+    const update = (w: number, h: number) => {
+      setSidePx(Math.max(1, Math.floor(Math.min(w, h))));
+    };
+    const r0 = row.getBoundingClientRect();
+    update(r0.width, r0.height);
+    const ro = new ResizeObserver((entries) => {
+      const e = entries[0];
+      if (e) {
+        const { width, height } = e.contentRect;
+        update(width, height);
+      }
+    });
+    ro.observe(row);
+    return () => ro.disconnect();
+  }, []);
+
+  const halfDiagUser = (0.5 * Math.hypot(NODE_CARD_W, NODE_EST_H) * VIEW) / sidePx;
+  const edgeStartMargin = Math.max(28, halfDiagUser);
+  const edgeEndMargin = Math.max(28, halfDiagUser + 14);
 
   return (
     <SlideChrome videoSubtitle={slide.videoSubtitle}>
@@ -101,30 +129,41 @@ export const ExplainerGraphSlideView: React.FC<{
         ) : null}
 
         <div
+          ref={graphRowRef}
           style={{
             position: "relative",
             width: "100%",
             minHeight: GRAPH_MIN_H,
             flex: 1,
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
           }}
         >
-          <svg
-            width="100%"
-            height="100%"
-            viewBox="0 0 1000 1000"
-            preserveAspectRatio="xMidYMid meet"
+          <div
             style={{
-              position: "absolute",
-              left: 0,
-              top: 0,
-              pointerEvents: "none",
-              filter: "drop-shadow(0 0 12px rgba(53,184,255,0.15))",
+              position: "relative",
+              width: sidePx,
+              height: sidePx,
+              maxWidth: "100%",
+              maxHeight: "100%",
+              flexShrink: 0,
             }}
-            aria-hidden
           >
-            <defs>
-              <DiagramArrowheadMarker id={EXPLAINER_GRAPH_ARROW_MARKER} fill={slideChrome.accent} />
-            </defs>
+            <svg
+              width="100%"
+              height="100%"
+              viewBox="0 0 1000 1000"
+              preserveAspectRatio="xMidYMid meet"
+              style={{
+                position: "absolute",
+                left: 0,
+                top: 0,
+                pointerEvents: "none",
+                filter: "drop-shadow(0 0 12px rgba(53,184,255,0.15))",
+              }}
+              aria-hidden
+            >
             {edges.map((e, ei) => {
               const ia = nodes.findIndex((n) => n.id === e.from);
               const ib = nodes.findIndex((n) => n.id === e.to);
@@ -147,18 +186,21 @@ export const ExplainerGraphSlideView: React.FC<{
                   fromY={p0.y}
                   toX={p1.x}
                   toY={p1.y}
+                  nodeMarginStart={edgeStartMargin}
+                  nodeMarginEnd={edgeEndMargin}
                   drawProgress={vis}
                   trackColor={slideChrome.border}
-                  trackWidth={14}
+                  trackWidth={e.lineTrackWidth ?? 14}
                   accentColor={slideChrome.accent}
-                  accentWidth={4}
-                  accentMarkerId={EXPLAINER_GRAPH_ARROW_MARKER}
+                  accentWidth={e.lineAccentWidth ?? 4}
+                  arrowHeadSize={e.arrowHeadSize ?? 12}
+                  showTrack={e.showLineTrack !== false}
                   trackOpacity={0.35 + 0.5 * pulse}
                   accentOpacity={0.4 + 0.55 * pulse}
                 />
               );
             })}
-          </svg>
+            </svg>
 
           {nodes.map((n, i) => {
             const t0 = nodeStartFrame(i);
@@ -288,6 +330,7 @@ export const ExplainerGraphSlideView: React.FC<{
               </div>
             ) : null;
           })}
+          </div>
         </div>
       </div>
     </SlideChrome>
