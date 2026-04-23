@@ -1,5 +1,5 @@
 {
-  "title": "科普短片：shadcn/ui 是什么、怎么用",
-  "description": "动效分镜介绍 shadcn/ui：CLI 拉源码、Radix 与 Tailwind、可组合与可维护；适合技术分享开场或新人 onboarding。无预混语音轨。",
+  "title": "动效科普：shadcn/ui 在解决什么结构问题",
+  "description": "图与代码为主、几乎无段落朗读：registry→CLI→仓内组件的链路、黑盒依赖的张力、以及拼装交付的闭环。符合 motion explainer 产品默认。",
   "slug": "shadcn-ui-intro"
 }

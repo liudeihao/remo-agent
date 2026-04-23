@@ -1,8 +1,8 @@
-# Video plan: slide kinds and fields
+# Video plan: timeline segment kinds and fields
 
 **Normative source**: `src/types/videoPlan.ts`. This file is a readable mirror for agents; on conflict, the TypeScript types win.
 
-**激进默认（v0.4）**：本仓库的默认是 **动效、大画幅、别保守**——非用户明确要求「静态/组会/极简」时，**禁止**把分镜当成「带配音的 PPT」。**JSON** 定节拍与 `kind`；**尺寸/弹簧/持续运动** 在 `*SlideView`。**BANNED / REQUIRED** 与 **RED LINE** 见两份 Skill 正文。
+**激进默认（v0.4）**：本仓库的默认是 **科普向动效片**——以 **插图/符号/画面运动** 为主承载信息，**避免**长段正文占据主画面；非用户明确要求「静态/组会/极简」时，**禁止**把分镜做成「带配音的**静态串页念稿**」。**JSON** 定节拍与 `kind`；**尺寸/弹簧/持续运动** 在 `*SlideView`。**BANNED / REQUIRED** 与 **RED LINE** 见 **`remo-agent-video-plan`** 与 **`remo-agent-motion-views`** 的 Skill 正文；产品边界见 **`.cursor/rules/motion-explainer-product.mdc`**。
 
 ## Common fields (all kinds)
 

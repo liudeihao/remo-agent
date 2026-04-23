@@ -1,13 +1,13 @@
 ---
 name: remo-agent-component-readiness
 description: >-
-  Default remo-agent workflow (user need not ask): prepare slide/presentation components before
+  Default remo-agent workflow (user need not ask): prepare motion-view components before
   Remotion composition and plan wiring. Reuse only when semantics fully match; otherwise implement
   dedicated views. Forbids hacking existing components and force-fitting the wrong primitive.
-  Triggers: new slide kind, missing SlideView, video-plan or render work that implies new visuals,
-  组件先行, before Remotion, 不要凑合, 不要魔改. Pairs with remo-agent-slide-components; precedes
+  Triggers: new kind, missing SlideView, video-plan or render work that implies new visuals,
+  组件先行, before Remotion, 不要凑合, 不要魔改. Pairs with remo-agent-motion-views; precedes
   remo-agent-video-plan / remo-agent-remotion-render. Counters over-reuse and “JSON-only new look.”
-version: 0.1.2
+version: 0.1.3
 metadata:
   project: remo-agent
 ---
@@ -16,9 +16,9 @@ metadata:
 
 ## Intent
 
-Ship **honest** presentation code: the right building blocks exist **before** heavy `VideoFromPlan` / timeline work. **Libraries** for domains (parsing, auth, math) still follow `.cursor/rules/prefer-existing-solutions.mdc`; this skill governs **project-owned slide views and primitives**, not npm shopping.
+Ship **honest** motion-view code: the right building blocks exist **before** heavy `VideoFromPlan` / timeline work. **Libraries** for domains (parsing, auth, math) still follow `.cursor/rules/prefer-existing-solutions.mdc`; this skill governs **project-owned `*SlideView` code and primitives**, not npm shopping.
 
-**Project default:** `.cursor/rules/component-first-default.mdc` (`alwaysApply: true`) makes this order binding for remo-agent presentation work—you do **not** need the user to say “组件先行” each time. Read this skill when the task touches new or changed slide visuals.
+**Project default:** `.cursor/rules/component-first-default.mdc` and `.cursor/rules/motion-explainer-product.mdc` (`alwaysApply: true`) bind order and product shape—you do **not** need the user to say “组件先行” each time. Read this skill when the task touches new or changed on-screen visuals.
 
 ## When to use
 
@@ -28,9 +28,9 @@ Ship **honest** presentation code: the right building blocks exist **before** he
 ## Workflow (order matters)
 
 1. **Inventory** — List shots: layout role, data shown, motion contract, and which `kind` / `SlideView` each needs.
-2. **Gap analysis** — For each shot, decide: **existing view fits completely** vs **missing or wrong semantics** (see `remo-agent-slide-components`: reuse only when meaning matches).
+2. **Gap analysis** — For each shot, decide: **existing view fits completely** vs **missing or wrong semantics** (see `remo-agent-motion-views`: reuse only when meaning matches).
 3. **Implement gaps** — Add **new** `*SlideView`, primitives, or registry entries. Extract shared **small** helpers if two honest views share mechanics; do **not** widen one view with “modes” to mean something else.
-4. **Wire types & catalog** — `videoPlan.ts`, `slideRegistry`, `SLIDE_CATALOG`, [slide-kinds.md](../remo-agent-video-plan/references/slide-kinds.md) as required by the slide-components skill.
+4. **Wire types & catalog** — `videoPlan.ts`, `slideRegistry`, `SLIDE_CATALOG`, [slide-kinds.md](../remo-agent-video-plan/references/slide-kinds.md) as required by the motion-views skill.
 5. **Only then** — Author or adjust `VideoPlan` (`remo-agent-video-plan`) and Remotion entry/render (`remo-agent-remotion-render`).
 
 ## Hard rules
@@ -39,7 +39,7 @@ Ship **honest** presentation code: the right building blocks exist **before** he
 |------|---------|
 | **No force-fit** | If the closest component is “almost” right but teaches the **wrong relationship** or layout role, **do not** use it. Add the correct component. |
 | **No hack / 魔改** | Do not bolt one-off behavior onto unrelated shared views, explode props, or branch on video-specific hacks inside generic components. Prefer a **new** named view or a **small** shared primitive used by both. |
-| **Reuse bar** | Reuse is allowed only when **semantics and motion contract** already match (same as slide-components **semantics before reuse**). “Saves typing” is never sufficient. |
+| **Reuse bar** | Reuse is allowed only when **semantics and motion contract** already match (same as motion-views **semantics before reuse**). “Saves typing” is never sufficient. |
 
 ## Anti-lazy reuse (models over-default to “use what exists”)
 
@@ -53,6 +53,6 @@ Ship **honest** presentation code: the right building blocks exist **before** he
 
 ## Related
 
-- `remo-agent-slide-components` — motion, scale, registry, **semantic reuse law**
+- `remo-agent-motion-views` — motion, scale, registry, **semantic reuse law**
 - `remo-agent-video-plan` — plan JSON after views exist
 - `remo-agent-remotion-render` — preview/render after props and views align

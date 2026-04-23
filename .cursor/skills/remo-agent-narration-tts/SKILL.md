@@ -61,7 +61,7 @@ This project does **not** generate audio inside the React tree during `render` u
 ## Do not
 
 - Commit API keys, OAuth tokens, or long-lived credentials to the repo or to `.cursor/skills`.
-- Put TTS network calls inside `*SlideView` components (`remo-agent-slide-components`).
+- Put TTS network calls inside `*SlideView` components (`remo-agent-motion-views`).
 
 ## References
 

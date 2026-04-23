@@ -1,0 +1,12 @@
+---
+description: >-
+  remo-agent ships motion explainer animation (vectors, logic symbols, image/camera emphasis), not
+  serial on-screen paragraphs; text informs structure but must not dominate the canvas.
+alwaysApply: true
+---
+
+# Motion explainer (product default)
+
+- **Ship:** explainer **animation**—illustrations (icons, SVG, raster art), **logic and status symbols** (arrows, braces, grouping, delete/success markers, operators, etc.), and **emphasis motion** (zoom, pan, translate, camera) timed to the argument.
+- **Reject:** shots whose main job is **paragraph text** or “title + body copy” readout on camera. That is the same failure family as **static serial readout** (see `component-first-default.mdc`).
+- **Roles:** script and structure **inform** what to show; the **primary canvas** is **moving structure**, not walls of plaintext. Prefer `kind`s and views that **spend frames on motion**, not on dumping long strings for the viewer to read.

@@ -5,7 +5,7 @@ import type { ExplainerGraphSlide } from "../types/videoPlan";
 import { DirectedArrowEdgeSvg } from "./diagram/DirectedArrowEdgeSvg";
 import { slideChrome, SlideChrome } from "./SlideChrome";
 
-/** Fills frame — graph is the hero, not a PPT inset */
+/** Fills frame — graph is the hero, not a tiny inset panel */
 const GRAPH_MIN_H = 680;
 const NODE_CARD_W = 320;
 /** Match `minHeight: NODE_CARD_W * 0.95` on the card for shorten math */

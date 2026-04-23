@@ -15,11 +15,11 @@
 
 ## 理念：写 `plan.json` 时别保守
 
-本仓 Remotion 成片的**默认**是 **动效足、时间够、少像 PPT**；除非发布方/作者**明确要求**「极简、组会、几乎不动」。
+本仓 Remotion 成片的**默认**是 **动效足、时间够、少做成静态串页念稿**；除非发布方/作者**明确要求**「极简、组会、几乎不动」。
 
 - **多**用会随时间变样的 `kind`（如 `explainerGraph`、`kineticText` 且填好弧与 stagger、`media` 等），**少**用纯列表体搪塞整支片子。
 - 每镜给足 **`durationInFrames`**，让弹簧、画线、分步入场**看得完**；过短＝动效被切成闪光。
-- 画面仍像幻灯片时，除改 `plan` 外，要检查 `*SlideView` 的**尺寸与持续运动**（见 **`.cursor/skills/remo-agent-slide-components/SKILL.md` v0.4+**）。
+- 画面仍呆板、缺少动效与镜头语言时，除改 `plan` 外，要检查 `*SlideView` 的**尺寸与持续运动**（见 **`.cursor/skills/remo-agent-motion-views/SKILL.md` v0.5+**）。
 
 与根目录 `README.md` 的 **「理念：激进动效」** 同一条线。
 

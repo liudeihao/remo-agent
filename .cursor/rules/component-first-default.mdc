@@ -16,3 +16,5 @@ For **project-owned slides and Remotion visuals** (not npm library choice—see 
 - **Forbidden:** force-fitting the wrong primitive; one-off props/modes that smuggle a different meaning; editing unrelated shared components to serve a single video.
 
 Full checklist and gates: read `.cursor/skills/remo-agent-component-readiness/SKILL.md` when doing new slide kinds or visual work.
+
+Product canvas (motion + symbols, not paragraph walls): `.cursor/rules/motion-explainer-product.mdc`.
