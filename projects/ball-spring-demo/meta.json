@@ -1,5 +1,0 @@
-{
-  "title": "小球沿斜坡滚落与弹簧弹起（演示）",
-  "description": "单页 remo-agent 动画：小球沿斜坡滑下、接触弹簧、弹起。烧录字幕按帧与画面对齐，用于检验画面与字幕一致；无口播/无 TTS。",
-  "slug": "ball-spring-demo"
-}

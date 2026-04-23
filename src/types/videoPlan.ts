@@ -38,20 +38,7 @@ export type CodeSlide = SlideBase & {
   highlights?: string[];
 };
 
-/** One burn-in caption segment; frame numbers are relative to this slide (0 = slide start). */
-export type SubtitleCue = {
-  startFrame: number;
-  endFrame: number;
-  text: string;
-};
-
-export type RampBounceSlide = SlideBase & {
-  kind: "rampBounce";
-  /** On-screen subtitles for sync testing; not related to ttsText */
-  subtitleCues: SubtitleCue[];
-};
-
-export type PlanSlide = CoverSlide | BulletsSlide | MediaSlide | CodeSlide | RampBounceSlide;
+export type PlanSlide = CoverSlide | BulletsSlide | MediaSlide | CodeSlide;
 
 /** Discriminator union tag for registered slide renderers. */
 export type SlideKind = PlanSlide["kind"];

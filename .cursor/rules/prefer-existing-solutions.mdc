@@ -1,0 +1,10 @@
+---
+description: Prefer mature libraries over custom implementations when a domain already has good solutions
+alwaysApply: true
+---
+
+# Prefer existing solutions
+
+- When a problem has **established, maintained** answers (CRUD, auth, parsing, time zones, image/audio tooling, common animation/math libraries, etc.), **integrate a suitable package** instead of reimplementing from scratch.
+- For **Remotion and frame-based motion** that is **non-trivial** (e.g. multi-body simulation), prefer a **headless, deterministic** library and fixed timesteps, not an ad-hoc ODE; only build custom when the need is small or the tradeoff is explicit.
+- Only implement something custom when: the behavior is **trivially closed-form**, bundle/license forbids a dependency, or no credible library fits after a **brief** check (npm, docs).
