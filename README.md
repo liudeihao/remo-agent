@@ -29,6 +29,14 @@ npm run render
 npx remotion render src/index.ts VideoFromPlan out/my-video.mp4 --props=path\to\plan.json
 ```
 
+### 按项目目录出片（推荐）
+
+每个视频使用独立目录 `projects/<slug>/`，包含**标题/描述**（`meta.json`）、**Remotion props**（`plan.json`）、以及成片 **`out/video.mp4`**。约定见 `projects/README.md`。
+
+```powershell
+npm run render:project -- my-video-slug
+```
+
 ## JSON / 类型约定
 
 - 主类型：`VideoPlanProps`（`src/types/videoPlan.ts`）。
@@ -37,6 +45,8 @@ npx remotion render src/index.ts VideoFromPlan out/my-video.mp4 --props=path\to\
 - `kind`：`cover` | `bullets` | `media` | `code`（字段见类型）。
 
 示例：`data/sample-video-plan.json`。
+
+- 平台用**标题/长描述**：放在 `projects/<slug>/meta.json`（类型 `VideoProjectMeta`），**不**传给 Remotion；成片元数据与 `plan.json` 分离，避免和某页 `title` 混淆。
 
 ## Remotion 扩展方式（通用、可复用）
 
@@ -61,6 +71,8 @@ npx remotion render src/index.ts VideoFromPlan out/my-video.mp4 --props=path\to\
 - `src/slideRegistry.tsx` — 幻灯片索引（`SLIDE_CATALOG`）与 `renderSlideContent`
 - `src/components/*` — 各页视觉与 `index.ts` 总导出
 - `data/sample-video-plan.json` — 可渲染的完整示例
+- `projects/README.md` — 每视频一个 `projects/<slug>/` 目录约定
+- `projects/example-hello/` — 最小示例（`meta.json` + `plan.json`）
 
 ## 与上游「文案 / TTS」的衔接
 

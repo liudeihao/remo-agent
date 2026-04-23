@@ -9,3 +9,4 @@ export type {
   VideoPlanProps,
 } from "./videoPlan";
 export { defaultVideoPlanProps } from "./videoPlan";
+export type { VideoProjectMeta } from "./videoProjectMeta";

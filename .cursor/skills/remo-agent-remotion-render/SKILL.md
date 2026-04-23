@@ -7,7 +7,7 @@ description: >-
   render, "npm run dev", "npm run render", VideoFromPlan, out/video.mp4, sample-video-plan, Chrome
   Headless Shell. Does not define VideoPlan JSON schema (remo-agent-video-plan) or TTS
   (remo-agent-narration-tts).
-version: 0.2.0
+version: 0.2.1
 metadata:
   project: remo-agent
 

@@ -1,0 +1,36 @@
+# Video projects (per-run directories)
+
+每个视频（或一次制作）使用 **一个子目录** `projects/<slug>/`，把**成片以外的交付物**和 Remotion 的 props 收拢在一起。`<slug>` 用短横线连接的小写标识（kebab-case），例如 `weekly-brief-2026-04-23` 或 `product-intro-q2`。
+
+## 布局
+
+
+| Path            | 用途                                                             |
+| --------------- | -------------------------------------------------------------- |
+| `meta.json`     | 成片**标题**、**长描述**（上传平台、归档）；**不**传给 Remotion。                    |
+| `plan.json`     | **唯一**送给 `VideoFromPlan` 的 `VideoPlanProps`（`--props=...`）。    |
+| `out/video.mp4` | 默认**成片输出**；由 `npm run render:project -- <slug>` 创建 `out/` 并写入。 |
+| 其他              | 可放 TTS 中间文件、旁白 `wav`、封面图、**notes.md** 等；命名自定，但勿与下两项冲突。         |
+
+
+## 类型
+
+- `meta.json` 的 TypeScript 类型为 `VideoProjectMeta`（见 `src/types/videoProjectMeta.ts`）。
+
+## 渲染
+
+在仓库根目录执行：
+
+```powershell
+npm run render:project -- <slug>
+```
+
+会读取 `projects/<slug>/plan.json` 并输出到 `projects/<slug>/out/video.mp4`。
+
+`out/` 目录默认**不提交**到 Git（见根目录 `.gitignore`）。
+
+## 与 `data/` 的关系
+
+- `data/sample-video-plan.json` 保留为**全仓库**快速示例、CI 与 `npm run render`（根目录 `out/video.mp4`）对照用。
+- **正式成片**、多轮迭代、要附带标题/描述/附件时，用 `**projects/<slug>/`**。
+

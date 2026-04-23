@@ -13,6 +13,7 @@
 | `npm run dev` | Launches **Remotion Studio** for local preview. |
 | `npm run build` | `remotion bundle` — build deployable bundle; output under `build/` (gitignored by default). |
 | `npm run render` | Renders to `out/video.mp4` using `VideoFromPlan` and `data/sample-video-plan.json`. |
+| `npm run render:project -- <slug>` | Renders `projects/<slug>/plan.json` to `projects/<slug>/out/video.mp4` (creates `out/` if missing). |
 | `npm run render:props` | Runs `remotion render` with `VideoFromPlan` only (pass props manually in full CLI if needed). |
 
 ## Common `remotion render` invocations
@@ -25,6 +26,11 @@ npm run render
 ```bash
 # Custom output and props
 npx remotion render src/index.ts VideoFromPlan out/my-video.mp4 --props=path/to/plan.json
+```
+
+```bash
+# Per-project directory (see projects/README.md)
+npm run render:project -- my-video-slug
 ```
 
 **Windows paths in `--props`**: use a path the shell accepts; if spaces, quote the path. Prefer forward slashes or escaped backslashes in documentation examples.

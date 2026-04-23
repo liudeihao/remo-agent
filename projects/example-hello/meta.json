@@ -1,0 +1,5 @@
+{
+  "title": "示例：Hello 项目目录",
+  "description": "演示 projects/<slug>/ 布局：meta.json 存标题与描述，plan.json 为 Remotion props，成片在 out/video.mp4。生产环境请改成你的标题与简介（如用于 YouTube/B 站）。",
+  "slug": "example-hello"
+}

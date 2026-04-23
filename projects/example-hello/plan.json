@@ -1,0 +1,27 @@
+{
+  "fps": 30,
+  "width": 1920,
+  "height": 1080,
+  "slides": [
+    {
+      "kind": "cover",
+      "durationInFrames": 90,
+      "title": "示例项目",
+      "subtitle": "projects/example-hello/plan.json",
+      "periodLabel": "DEMO",
+      "brandFooter": "REMO AGENT",
+      "ttsText": "这是示例项目的口播稿占位。"
+    },
+    {
+      "kind": "bullets",
+      "durationInFrames": 90,
+      "headline": "本目录约定",
+      "lines": [
+        "meta.json：成片标题与描述（不传入 Remotion）",
+        "plan.json：VideoFromPlan 的唯一 props",
+        "out/video.mp4：npm run render:project -- example-hello"
+      ],
+      "highlights": ["meta.json", "plan.json", "out/"]
+    }
+  ]
+}

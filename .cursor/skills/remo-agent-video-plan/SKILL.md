@@ -4,9 +4,9 @@ description: >-
   Authors, validates, or explains JSON video plans (VideoPlanProps) for the remo-agent Remotion
   project—slide kinds, on-screen copy, ttsText, fps/dimensions, and props files. Triggers: video plan
   JSON, sample-video-plan, props for VideoFromPlan, "slides" schema, ttsText per scene, on-screen
-  headline/bullets/code/image. Does not cover new Remotion components or new kind values; use
-  remo-agent-slide-components for that.
-version: 0.2.0
+  headline/bullets/code/image, projects/slug plan.json and meta.json. Does not cover new Remotion
+  components or new kind values; use remo-agent-slide-components for that.
+version: 0.2.1
 metadata:
   project: remo-agent
 ---
@@ -16,7 +16,7 @@ metadata:
 ## Scope
 
 - **In scope**: structured data that drives `VideoFromPlan`—conformant JSON, field semantics, choice of `kind` from the **current** `PlanSlide` union, and copy for display / `ttsText` for downstream TTS.
-- **Out of scope**: TSX, `slideRegistry`, new `kind` discriminants, Remotion Studio, and `remotion` CLI. Those belong to other skills in this set.
+- **Out of scope**: TSX, `slideRegistry`, new `kind` discriminants, Remotion Studio, and `remotion` CLI. Those belong to other skills in this set. (`VideoProjectMeta` in `meta.json` is described here; Remotion does not read that file.)
 
 ## Skill map (this repository)
 
@@ -31,7 +31,8 @@ metadata:
 
 Apply this skill when the task involves any of:
 
-- Authoring or editing a props file passed to `VideoFromPlan` (`--props=...`).
+- Authoring or editing a props file passed to `VideoFromPlan` (`--props=...`), including `projects/<slug>/plan.json` in the [project directory layout](references/project-layout.md).
+- Authoring or validating `meta.json` (`title` / `description` / `slug`) alongside a project folder.
 - Explaining which slide `kind` fits a story beat (cover vs bullets vs media vs code).
 - Validating JSON against the schema before render or in CI.
 - Filling `ttsText` for off-render TTS (field meaning only; provider workflow is `remo-agent-narration-tts`).
@@ -49,14 +50,17 @@ Apply this skill when the task involves any of:
 | Per-kind field matrix | [references/slide-kinds.md](references/slide-kinds.md) |
 | Machine + human index of `kind` | `src/slideRegistry.tsx` (`SLIDE_CATALOG`) |
 | Worked example JSON | `data/sample-video-plan.json` |
+| Per-video folder convention | [references/project-layout.md](references/project-layout.md) and `projects/README.md` |
+| Sidecar metadata type | `src/types/videoProjectMeta.ts` (`VideoProjectMeta` for `meta.json`) |
 
 ## Workflow
 
-1. **Gather intent** — topic, target length (slide count or total duration in frames if fixed), language for on-screen text, whether `ttsText` is needed.
-2. **Map beats to `kind`s** — use [references/slide-kinds.md](references/slide-kinds.md) for required and optional fields per kind.
-3. **Assemble `VideoPlanProps`** — set `fps` / `width` / `height` if not default; ensure every slide has `durationInFrames` ≥ 1; optional `narrationAudioUrl` only after audio exists (see `remo-agent-narration-tts`).
-4. **Validate** — JSON parses; all `kind` values are in the `PlanSlide` union; no unknown top-level keys required by consumers beyond the type.
-5. **Hand off** — render: `remo-agent-remotion-render`; new layouts: `remo-agent-slide-components`.
+1. **Gather intent** — topic, target length (slide count or total duration in frames if fixed), language for on-screen text, whether `ttsText` is needed, **publishing title/description** (goes in `meta.json` when using a project directory).
+2. **Choose file layout** — for a full deliverable, create `projects/<slug>/` with `meta.json` + `plan.json` per [references/project-layout.md](references/project-layout.md). For a quick one-off, a standalone `plan.json` path is still valid.
+3. **Map beats to `kind`s** — use [references/slide-kinds.md](references/slide-kinds.md) for required and optional fields per kind.
+4. **Assemble `VideoPlanProps`** in `plan.json` — set `fps` / `width` / `height` if not default; ensure every slide has `durationInFrames` ≥ 1; optional `narrationAudioUrl` only after audio exists (see `remo-agent-narration-tts`).
+5. **Validate** — JSON parses; all `kind` values are in the `PlanSlide` union; if `meta.json` is used, `slug` matches the directory name.
+6. **Hand off** — render: `remo-agent-remotion-render`; new layouts: `remo-agent-slide-components`.
 
 ## Quality gate
 
@@ -66,6 +70,7 @@ Before sharing or committing a plan file:
 - [ ] Every slide has `kind`, `durationInFrames`, and fields required for that `kind` per [references/slide-kinds.md](references/slide-kinds.md).
 - [ ] Remote `imageUrl` values are reachable HTTPS URLs the render environment can fetch, or the user accepts render-time failure.
 - [ ] Sum of `durationInFrames` matches the intended run time (optional sanity: total frames / fps ≈ seconds).
+- [ ] If using `projects/<slug>/`, `meta.json` includes `title`, `description`, and `slug === "<slug>"`.
 
 ## Failure modes
 
@@ -86,6 +91,7 @@ Before sharing or committing a plan file:
 | Document | Content |
 |----------|---------|
 | [references/slide-kinds.md](references/slide-kinds.md) | Per-`kind` field reference and notes |
+| [references/project-layout.md](references/project-layout.md) | `projects/<slug>/` + `meta.json` + `plan.json` + `out/` |
 
 ## Related skills
 

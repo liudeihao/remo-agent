@@ -1,6 +1,9 @@
 node_modules/
 out/
+projects/**/out/
 dist/
 build/
 .DS_Store
 *.log
+
+reference/
