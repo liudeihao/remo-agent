@@ -48,11 +48,12 @@ npx remotion render src/index.ts VideoFromPlan out/my-video.mp4 --props=path\to\
 
 ## Agent skills
 
-本仓库在 `.cursor/skills/` 下提供项目级 **Agent Skills**（`SKILL.md`），便于在「需要出片 / 需要旁白 / 需要符合 schema 的 JSON」时自动套用：
+本仓库在 `.cursor/skills/` 下提供项目级 **Agent Skills**（`SKILL.md`），对应「文案 → 组件 → 出片」的分工：
 
-- `remo-agent-video-plan` — 视频计划 JSON 与字段说明
-- `remo-agent-remotion-render` — 本地 `remotion` 渲染与 Studio
-- `remo-agent-narration-tts` — `ttsText` 与 `narrationAudioUrl` 的衔接方式
+- `remo-agent-video-plan` — 视频计划 JSON（上屏文案、结构、`ttsText`）
+- `remo-agent-slide-components` — 新增/修改 Remotion 幻灯片组件与 `slideRegistry`（新 `kind`、可复用 UI）
+- `remo-agent-remotion-render` — Remotion Studio / 渲染 MP4
+- `remo-agent-narration-tts` — `ttsText` 与 `narrationAudioUrl` 的片外 TTS 衔接
 
 ## 目录
 

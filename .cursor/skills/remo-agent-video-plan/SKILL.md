@@ -1,6 +1,6 @@
 ---
 name: remo-agent-video-plan
-description: Authors or validates JSON video plans for the remo-agent Remotion project. Use when the user needs structured slide data, on-screen copy, ttsText per slide, or a schema for batch video; when integrating an agent with Remotion; or when editing data/sample-video-plan.json or any *plan*.json props file.
+description: Authors or validates JSON video plans (VideoPlanProps) for remo-agent—on-screen copy, slide kinds, ttsText, and props files. Use when editing plan JSON or generating scripts from existing slide kinds. Does not cover writing new Remotion components; for that, use remo-agent-slide-components.
 ---
 
 # Video plan (JSON) for remo-agent
@@ -46,4 +46,11 @@ description: Authors or validates JSON video plans for the remo-agent Remotion p
 
 ## Do not
 
-- Invent new `kind` values without also updating `src/types/videoPlan.ts` and `src/slideRegistry.tsx`.
+- Invent new `kind` values without also updating `src/types/videoPlan.ts` and `src/slideRegistry.tsx` (and adding the view) — follow **`remo-agent-slide-components`** for the full checklist.
+- Add JSX or new slide types inside compositions; new visuals belong in `*SlideView` + registry per `remo-agent-slide-components`.
+
+## Related skills
+
+- **`remo-agent-slide-components`** — new `kind`, new `*SlideView`, registry
+- **`remo-agent-remotion-render`** — render to MP4, Studio
+- **`remo-agent-narration-tts`** — `ttsText` / `narrationAudioUrl`

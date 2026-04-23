@@ -19,6 +19,12 @@ description: Connects text-to-speech and mixed audio to remo-agent video plans. 
 4. Upload or write the mixed file; set `narrationAudioUrl` in the final JSON.
 5. Run `remotion render` (see `remo-agent-remotion-render`).
 
+## Related skills
+
+- **`remo-agent-video-plan`** — `ttsText` and `VideoPlanProps`
+- **`remo-agent-slide-components`** — only if you need new slide UI; not required for TTS alone
+- **`remo-agent-remotion-render`** — final MP4
+
 ## In-repo placeholder
 
 - No API keys, no TTS client: keep providers outside the repo to avoid secret leakage.

@@ -29,6 +29,12 @@ description: Renders or previews remo-agent Remotion videos from JSON props. Use
 2. Run `npx remotion render src/index.ts VideoFromPlan <output.mp4> --props=<file.json>`.
 3. If render fails, surface stderr; common issues: invalid JSON, bad image URL, missing duration frames.
 
+## Related skills
+
+- **`remo-agent-video-plan`** — author `VideoPlanProps` JSON
+- **`remo-agent-slide-components`** — add or change slide views and `kind`s (not usually needed just to render)
+- **`remo-agent-narration-tts`** — narration audio
+
 ## Do not
 
 - Point `--props` at a file that is not valid JSON.
