@@ -35,7 +35,7 @@ Use this in order. Skipping a step usually causes duplicate sources of truth or 
 | Item | Convention |
 |------|------------|
 | File | `PascalCase` + `SlideView.tsx` |
-| `kind` string | `camelCase` or `lowercase`—match one existing style in `videoPlan.ts` (currently lowercase: `cover`, `bullets`, `media`, `code`) |
+| `kind` string | `camelCase` or `lowercase`—match one existing style in `videoPlan.ts` (currently lowercase: `cover`, `bullets`, `media`, `code`, `kineticText`) |
 | Catalog `label` | Short Title Case for Studio humans |
 
 ## Anti-patterns

@@ -1,0 +1,100 @@
+{
+  "fps": 30,
+  "width": 1920,
+  "height": 1080,
+  "slides": [
+    {
+      "kind": "kineticText",
+      "durationInFrames": 150,
+      "title": "论文、经费与「生产资料」",
+      "lines": [
+        "下面分镜用动效字说明一段引文里的逻辑，不是静态翻页。",
+        "无配音；出处在最后一页再点一次书名。"
+      ],
+      "contentArc": "setup",
+      "staggerFrames": 5,
+      "outroFadeFrames": 12
+    },
+    {
+      "kind": "kineticText",
+      "durationInFrames": 200,
+      "title": "引文在描述什么？",
+      "lines": [
+        "高校对博士生常要求「发表论文」——要的是可检查、可计量的产出。",
+        "系里对「你写什么、是否贴合志趣」的精力，往往让位于「发没发、发在哪」。",
+        "因此制度目标，常常通过「指标」来中介个人研究。"
+      ],
+      "contentArc": "pressure",
+      "staggerFrames": 6,
+      "highlights": ["发表论文", "指标"],
+      "outroFadeFrames": 15
+    },
+    {
+      "kind": "kineticText",
+      "durationInFrames": 210,
+      "title": "系所与论文：放进哪条链里",
+      "lines": [
+        "可检索的论文 承担 对外交代 与 资源竞争中的可见成果。",
+        "项目与经费 需要材料证明 钱花在了成果上 账目才站得住。",
+        "在行政与资源逻辑里 可计量产出一度压过 个人选题细节。"
+      ],
+      "contentArc": "mechanism",
+      "staggerFrames": 6,
+      "highlights": ["论文", "经费", "可计量"],
+      "outroFadeFrames": 15
+    },
+    {
+      "kind": "kineticText",
+      "durationInFrames": 220,
+      "title": "原句里的两步（对撞对读）",
+      "lines": [
+        "系里要论文，来支撑 经费 如何花得可解释。",
+        "持续经费与排名，又拿来说明 本系 存在的合理。",
+        "两步扣成 自我强化的 组织叙事。",
+        "不特指 某一所学校。"
+      ],
+      "contentArc": "dialectic",
+      "staggerFrames": 5,
+      "highlights": ["论文", "经费", "本系"],
+      "outroFadeFrames": 15
+    },
+    {
+      "kind": "kineticText",
+      "durationInFrames": 220,
+      "title": "「生产资料」是比喻",
+      "lines": [
+        "在政经语境里 生产资料 指投入生产、产出剩余的手段与条件。",
+        "借用到这句话里 是说在强指标下 学生劳动 有时被按 可交付成果 来组织。",
+        "这是批判 结构 的修辞 不是否定 具体 导师或同门。"
+      ],
+      "contentArc": "metaphor",
+      "staggerFrames": 7,
+      "highlights": ["生产资料", "结构"],
+      "outroFadeFrames": 16
+    },
+    {
+      "kind": "kineticText",
+      "durationInFrames": 200,
+      "title": "可以怎么用这卷片子",
+      "lines": [
+        "读书会 或 新生说明：帮听众分清 制度结构 与 具体人际。",
+        "伦理课 可接著讨论：不理想的制度下 如何护住 自己的问题意识。",
+        "不替代 读书；书名 机器没问题…  指向 人与制度 的关系。"
+      ],
+      "contentArc": "application",
+      "staggerFrames": 7,
+      "outroFadeFrames": 20
+    },
+    {
+      "kind": "kineticText",
+      "durationInFrames": 140,
+      "title": "《机器没问题，有问题的是我们自己》",
+      "lines": [
+        "分镜动效 仅辅助理解 引文 立场见原文。"
+      ],
+      "contentArc": "closing",
+      "staggerFrames": 8,
+      "outroFadeFrames": 30
+    }
+  ]
+}

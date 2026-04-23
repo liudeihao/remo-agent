@@ -38,7 +38,43 @@ export type CodeSlide = SlideBase & {
   highlights?: string[];
 };
 
-export type PlanSlide = CoverSlide | BulletsSlide | MediaSlide | CodeSlide;
+import type { KineticContentArc } from "../lib/kineticArc";
+
+export type KineticTextLineAnim =
+  | "staggerBounce"
+  | "staggerFade"
+  | "wordStagger"
+  | "collide"
+  | "driftTilt"
+  | "floatIn";
+
+export type { KineticContentArc };
+
+/**
+ * 科普/动效字：语义图标 + 叙事弧驱动动效。`frame` 在 Sequence 内从 0 起算。
+ * 须提供 `contentArc` 或 `lineAnimation` 之一；若同时提供，以 `contentArc` 为准。
+ */
+export type KineticTextSlide = SlideBase & {
+  kind: "kineticText";
+  title?: string;
+  lines: string[];
+  lineAnimation?: KineticTextLineAnim;
+  contentArc?: KineticContentArc;
+  /** 高亮词前是否画语义小图标，默认 true */
+  showSemanticIcons?: boolean;
+  /** Delay between line (or group) starts；不设则随 contentArc 取默认 */
+  staggerFrames?: number;
+  highlights?: string[];
+  /** 片尾渐隐，便于接下一镜（0 = 不渐隐） */
+  outroFadeFrames?: number;
+};
+
+export type PlanSlide =
+  | CoverSlide
+  | BulletsSlide
+  | MediaSlide
+  | CodeSlide
+  | KineticTextSlide;
 
 /** Discriminator union tag for registered slide renderers. */
 export type SlideKind = PlanSlide["kind"];

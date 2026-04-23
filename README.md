@@ -42,7 +42,7 @@ npm run render:project -- my-video-slug
 - 主类型：`VideoPlanProps`（`src/types/videoPlan.ts`）。
 - 顶层：`fps`、`width`、`height`（可选）、`slides[]`、可选 `narrationAudioUrl`（整段旁白，HTTPS 或 `file:`）。
 - 每页 `slide`：必有 `kind`、`durationInFrames`；可选 `ttsText`（给上游 TTS 用，成片可不内嵌 TTS）。
-- `kind`：`cover` | `bullets` | `media` | `code`（字段见类型与 `slideRegistry` 中的 `SLIDE_CATALOG`）。
+- `kind`：`cover` | `bullets` | `media` | `code` | `kineticText`（动效/科普字，见 `SLIDE_CATALOG` 与 `KineticTextSlideView`）。
 
 示例：`data/sample-video-plan.json`。
 

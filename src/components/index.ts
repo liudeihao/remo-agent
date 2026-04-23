@@ -6,4 +6,5 @@ export { BulletsSlideView } from "./BulletsSlideView";
 export { CodeSlideView } from "./CodeSlideView";
 export { CoverSlideView } from "./CoverSlideView";
 export { MediaSlideView } from "./MediaSlideView";
+export { KineticTextSlideView } from "./KineticTextSlideView";
 export { SlideChrome, slideChrome } from "./SlideChrome";
