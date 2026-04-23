@@ -1,0 +1,175 @@
+{
+  "fps": 30,
+  "width": 1920,
+  "height": 1080,
+  "slides": [
+    {
+      "kind": "cover",
+      "durationInFrames": 110,
+      "title": "axios 投毒与「好莱坞式」骗术",
+      "subtitle": "能看清链路与演示，就别看字墙",
+      "periodLabel": "科普",
+      "brandFooter": "visual-first 分镜"
+    },
+    {
+      "kind": "media",
+      "durationInFrames": 200,
+      "headline": "从「可信下载」到「投毒包」",
+      "imageUrl": "https://images.unsplash.com/photo-1550751827-4bd374c3f58b?auto=format&w=1920&q=80",
+      "caption": "供应链攻击：问题不一定出在你手写的三行业务代码，而在你信赖的上游发版。"
+    },
+    {
+      "kind": "explainerGraph",
+      "durationInFrames": 300,
+      "title": "「投毒」= 把木马打进官方渠道",
+      "nodes": [
+        { "id": "a", "x": 0.5, "y": 0.22, "iconId": "people", "shortLabel": "攻击者" },
+        { "id": "b", "x": 0.3, "y": 0.48, "iconId": "scales", "shortLabel": "发布令牌" },
+        { "id": "c", "x": 0.7, "y": 0.48, "iconId": "book", "shortLabel": "注册表上的 axios" },
+        { "id": "d", "x": 0.5, "y": 0.78, "iconId": "cogs", "shortLabel": "带毒构建产物" }
+      ],
+      "edges": [
+        { "from": "a", "to": "b", "label": "窃凭据" },
+        { "from": "b", "to": "c", "label": "冒名发版" },
+        { "from": "c", "to": "d", "label": "用户拉取" }
+      ],
+      "revealStaggerFrames": 10,
+      "outroFadeFrames": 12
+    },
+    {
+      "kind": "code",
+      "durationInFrames": 240,
+      "headline": "演示：你平时就是这样「信任上游」的",
+      "language": "text",
+      "code": "{\n  \"dependencies\": {\n    \"axios\": \"^1.6.0\"\n  }\n}",
+      "highlights": ["axios"]
+    },
+    {
+      "kind": "code",
+      "durationInFrames": 220,
+      "headline": "演示：装依赖 = 把上游产物的代码拉进你机器/CI",
+      "language": "bash",
+      "code": "npm install\n# 之后打包、部署、CI 都会把依赖打进产物里",
+      "highlights": ["npm install"]
+    },
+    {
+      "kind": "media",
+      "durationInFrames": 190,
+      "headline": "好莱坞式 = 人脑才是特效镜头",
+      "imageUrl": "https://images.unsplash.com/photo-1521737604893-d14cc237f11d?auto=format&w=1920&q=80",
+      "caption": "令牌往往不是在键盘上被「猜」出来，而是被信任、身份与话术在真实世界绕出来。"
+    },
+    {
+      "kind": "explainerGraph",
+      "durationInFrames": 320,
+      "title": "社会工程：四幕戏（示意）",
+      "nodes": [
+        { "id": "a", "x": 0.2, "y": 0.35, "iconId": "light", "shortLabel": "长期铺垫" },
+        { "id": "b", "x": 0.4, "y": 0.2, "iconId": "people", "shortLabel": "假身份" },
+        { "id": "c", "x": 0.6, "y": 0.35, "iconId": "scales", "shortLabel": "换信任" },
+        { "id": "d", "x": 0.8, "y": 0.5, "iconId": "cogs", "shortLabel": "窃令牌&发版" }
+      ],
+      "edges": [
+        { "from": "a", "to": "b" },
+        { "from": "b", "to": "c" },
+        { "from": "c", "to": "d", "label": "防不胜烦" }
+      ],
+      "revealStaggerFrames": 9,
+      "outroFadeFrames": 10
+    },
+    {
+      "kind": "media",
+      "durationInFrames": 180,
+      "headline": "为什么「面」会这么大？",
+      "imageUrl": "https://images.unsplash.com/photo-1451187580459-43490279c0fa?auto=format&w=1920&q=80",
+      "caption": "明星依赖 = 周下载量接近天文数字；一次污染，全球流水线都可能喝到同一口。"
+    },
+    {
+      "kind": "explainerGraph",
+      "durationInFrames": 280,
+      "title": "影响怎么扩散？（非常简化）",
+      "nodes": [
+        { "id": "a", "x": 0.5, "y": 0.25, "iconId": "book", "shortLabel": "axios" },
+        { "id": "b", "x": 0.25, "y": 0.55, "iconId": "people", "shortLabel": "亿级周下载" },
+        { "id": "c", "x": 0.75, "y": 0.55, "iconId": "cogs", "shortLabel": "CI/构建机" },
+        { "id": "d", "x": 0.5, "y": 0.82, "iconId": "building", "shortLabel": "内网/密钥环境" }
+      ],
+      "edges": [
+        { "from": "a", "to": "b" },
+        { "from": "a", "to": "c" },
+        { "from": "b", "to": "d" },
+        { "from": "c", "to": "d" }
+      ],
+      "revealStaggerFrames": 8,
+      "outroFadeFrames": 10
+    },
+    {
+      "kind": "explainerGraph",
+      "durationInFrames": 300,
+      "title": "木马在干什么？（外泄链）",
+      "nodes": [
+        { "id": "a", "x": 0.2, "y": 0.45, "iconId": "cogs", "shortLabel": "跑起来的恶意代码" },
+        { "id": "b", "x": 0.5, "y": 0.3, "iconId": "scales", "shortLabel": "扫盘找密钥" },
+        { "id": "c", "x": 0.5, "y": 0.65, "iconId": "light", "shortLabel": "聚合成材料" },
+        { "id": "d", "x": 0.8, "y": 0.45, "iconId": "people", "shortLabel": "外传到攻击方" }
+      ],
+      "edges": [
+        { "from": "a", "to": "b" },
+        { "from": "b", "to": "c" },
+        { "from": "c", "to": "d", "label": "清除指南常建议：能作废全作废" }
+      ],
+      "revealStaggerFrames": 9,
+      "outroFadeFrames": 10
+    },
+    {
+      "kind": "code",
+      "durationInFrames": 200,
+      "headline": "演示：为什么有人说「要轮换一切」",
+      "language": "text",
+      "code": "SSH_KEY=***\nNPM_TOKEN=***\nAWS_ACCESS_KEY=***\n# 木马会尝试把这些「捡走」",
+      "highlights": ["NPM_TOKEN", "AWS_ACCESS_KEY", "捡走"]
+    },
+    {
+      "kind": "media",
+      "durationInFrames": 190,
+      "headline": "处置：当怀疑被污染时",
+      "imageUrl": "https://images.unsplash.com/photo-1633265486064-086b219458ec?auto=format&w=1920&q=80",
+      "caption": "视觉隐喻：把已泄漏的「钥匙」整串换掉，而不仅是把门锁擦一擦。"
+    },
+    {
+      "kind": "explainerGraph",
+      "durationInFrames": 300,
+      "title": "矛盾：线上一丝不苟，线外会被演",
+      "nodes": [
+        { "id": "a", "x": 0.5, "y": 0.2, "iconId": "cogs", "shortLabel": "每行可审" },
+        { "id": "b", "x": 0.3, "y": 0.55, "iconId": "scales", "shortLabel": "流水线与合规" },
+        { "id": "c", "x": 0.7, "y": 0.55, "iconId": "people", "shortLabel": "人 + 令牌" },
+        { "id": "d", "x": 0.5, "y": 0.85, "iconId": "light", "shortLabel": "最常被盯上的面" }
+      ],
+      "edges": [
+        { "from": "a", "to": "b" },
+        { "from": "a", "to": "c" },
+        { "from": "b", "to": "d" },
+        { "from": "c", "to": "d", "label": "社会工程" }
+      ],
+      "revealStaggerFrames": 9,
+      "outroFadeFrames": 12
+    },
+    {
+      "kind": "explainerGraph",
+      "durationInFrames": 260,
+      "title": "收束：你带走的关系图",
+      "nodes": [
+        { "id": "a", "x": 0.35, "y": 0.45, "iconId": "book", "shortLabel": "信任上游" },
+        { "id": "b", "x": 0.65, "y": 0.45, "iconId": "people", "shortLabel": "能发版的人" },
+        { "id": "c", "x": 0.5, "y": 0.75, "iconId": "scales", "shortLabel": "风险回到所有人" }
+      ],
+      "edges": [
+        { "from": "a", "to": "b" },
+        { "from": "b", "to": "c" }
+      ],
+      "revealStaggerFrames": 10,
+      "outroFadeFrames": 20
+    }
+  ]
+}

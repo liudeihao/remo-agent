@@ -4,6 +4,7 @@ const iconAccent = "#5bc0ff";
 const iconMuted = "#7c8aa0";
 
 const stroke = "currentColor";
+/** Base SVG viewBox size; rendered size comes from `SemanticIconById` `size` */
 const sz = 22;
 
 /**
@@ -259,9 +260,26 @@ export function SemanticIconById({ id, size = 24 }: { id: SemanticIconName; size
     return null;
   }
   const C = idToComponent[id];
+  const scale = size / sz;
   return (
-    <span style={{ display: "inline-flex", width: size, height: size, alignItems: "center", justifyContent: "center" }}>
-      <C />
+    <span
+      style={{
+        display: "inline-flex",
+        width: size,
+        height: size,
+        alignItems: "center",
+        justifyContent: "center",
+      }}
+    >
+      <span
+        style={{
+          display: "inline-block",
+          transform: `scale(${scale})`,
+          transformOrigin: "center center",
+        }}
+      >
+        <C />
+      </span>
     </span>
   );
 }

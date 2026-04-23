@@ -1,144 +1,141 @@
 ---
 name: remo-agent-video-plan
 description: >-
-  Authors, validates, or explains JSON video plans (VideoPlanProps) for the remo-agent Remotion
-  project—slide kinds, on-screen copy, ttsText, fps/dimensions, and props files. Triggers: video plan
-  JSON, sample-video-plan, props for VideoFromPlan, "slides" schema, ttsText per scene, on-screen
-  headline/bullets/code/image, projects/slug plan.json and meta.json (Chinese 标题/简介 for CN
-  publishing). **Multiple delivery styles** are first-class (see **Delivery style**). Motion follows
-  narrative meaning (see Core principles). Does not cover new Remotion components or new kind values;
-  use remo-agent-slide-components for that.
-version: 0.2.5
+  **RADICAL / NOT CONSERVATIVE.** Video plans for remo-agent: default to **max motion, max clarity,
+  max time on screen for motion to read**—PPT = failure. Bans empty kinetics, "safe" omissions,
+  bullets-first, and apologetic pacing. Pairs with remo-agent-slide-components (pixels & springs).
+  v0.4.0
+version: 0.4.0
 metadata:
   project: remo-agent
 ---
 
 # remo-agent — Video plan (data layer)
 
+## **STOP: default is RADICAL, not safe**
+
+**Do not be conservative.** This skill exists to stop agents from shipping **dubbed static decks**. If you are about to: strip `contentArc` “to be tasteful,” shorten `durationInFrames` “to be tight,” or pick `bullets` because the topic is “serious,” **STOP** and re-read this file.
+
+- **Conservative = wrong** for Remotion work unless the user **explicitly** asked for 极简 / 幻灯片 / 少动.
+- **Radical = default**: assume **strong** timing, **filled** motion fields, **loud** layout choices, then **only** pull back if the user said “quiet / static / meeting deck.”
+- “Meaning over motion” does **not** mean “less motion.” It means: **no incoherent** motion. **Coherent, loud, visible motion** is the **expected** state.
+
 ## Scope
 
-- **In scope**: structured data that drives `VideoFromPlan`—conformant JSON, field semantics, choice of `kind` from the **current** `PlanSlide` union, and copy for display / `ttsText` for downstream TTS.
-- **Out of scope**: TSX, `slideRegistry`, new `kind` discriminants, Remotion Studio, and `remotion` CLI. Those belong to other skills in this set. (`VideoProjectMeta` in `meta.json` is described here; Remotion does not read that file.)
+- **In**: `VideoPlanProps` JSON, `meta.json`, which `kind`, copy, TTS text, timings that **weaponize** the timeline.
+- **Out**: TSX, registry, new `kind` (→ `remo-agent-slide-components`), Remotion CLI (→ render skill).
 
-### `meta.json` title / description (language)
+### `meta.json` (language)
 
-- `title` and `description` are **human-facing** strings for 成片标题 / 平台简介 / 归档说明，**不**进 Remotion。
-- **Content language** follows the user and the target platform (e.g. **Simplified Chinese** 标题 + 长简介 for 国内); bilingual is fine if the user asks. **JSON keys** remain English (`title`, `description`, `slug`) for tooling.
-- When the user writes in Chinese or targets Chinese platforms, the agent should **同时产出中文标题与中文简介** in `meta.json` alongside `plan.json`, unless they specify another language. See [references/project-layout.md](references/project-layout.md) and `projects/README.md`.
+- Human-facing `title` / `description`; JSON keys in English. Chinese platforms → **中文** title+description in `meta.json` unless the user says otherwise. See [project-layout](references/project-layout.md).
 
-## Skill map (this repository)
+---
 
-| Concern | Skill |
-|--------|--------|
-| JSON / `VideoPlanProps` | **this** |
-| `*SlideView`, registry, new `kind` | `remo-agent-slide-components` |
-| Studio / `remotion render` / MP4 | `remo-agent-remotion-render` |
-| TTS, mixed narration URL | `remo-agent-narration-tts` |
+## Remotion = **time**. No time = not video.
 
-## When to use
+**Every** segment must **earn** its frames with **visible change** (motion, build, graph draw, camera, type-on, spring—something). A slide that only **crossfades** is a **defect**, not “minimal design.”
 
-Apply this skill when the task involves any of:
+- **Serious content** = **stronger** hierarchy and motion, not **weaker** motion. Audiences don’t read faster when nothing moves; they **disengage**.
 
-- Authoring or editing a props file passed to `VideoFromPlan` (`--props=...`), including `projects/<slug>/plan.json` in the [project directory layout](references/project-layout.md).
-- Authoring or validating `meta.json` (`title` / `description` / `slug`) alongside a project folder.
-- Explaining which slide `kind` fits a **story beat and delivery style** (all registered kinds in [slide-kinds](references/slide-kinds.md); see **Delivery style** below).
-- Validating JSON against the schema before render or in CI.
-- Filling `ttsText` for off-render TTS (field meaning only; provider workflow is `remo-agent-narration-tts`).
+---
 
-## Prerequisites
+## BANNED behaviors (treat as errors)
 
-- Repository root = remo-agent project; `package.json` present.
-- Types and catalog live in-repo—do not invent `kind` strings not present in `src/types/videoPlan.ts` and `SLIDE_CATALOG` in `src/slideRegistry.tsx`. Extending the set is **not** a video-plan–only change; see `remo-agent-slide-components`.
+| Banned | Why |
+|--------|-----|
+| Leaving `contentArc` / `lineAnimation` / `stagger` **empty** on `kineticText` “to be safe” | You are **hiding** the tool; the output **dies**. |
+| **Sub-60f** `durationInFrames` for a beat that should show **stagger, graph, or kinetics** | Motion **cannot** read; you made a **flash**. |
+| **Bullets** as the default for “explanation” | That’s **slide brain**. Use **graph, kinetic, media, code** first unless the user said **组会/列表**. |
+| **Typewriter** for long runs when a **graph or diagram** would carry the idea | Text walls are a **retreat**; **fight** for a visual. |
+| Blaming the user for “not proving motion in the prompt” | **You** set the plan; **components** set pixels. If it’s PPT, **escalate** to slide-components. |
+| “Restraint” as an aesthetic | Restraint is for **print**. Here it reads as **laziness**. |
 
-## Source of truth
+---
+
+## REQUIRED bias (do this on purpose)
+
+1. **Prefer kinds that *move*:** `explainerGraph`, `kineticText` (fully filled), `media`, `code`—in that order of energy, **then** add `typewriter` or `bullets` only when necessary.
+2. **Fill the knobs:** `contentArc` + sensible `staggerFrames`, **long enough** `durationInFrames` that springs and graph draws **finish and breathe** (aim **generous**; user can say “shorter” later).
+3. **Hooks in the first seconds:** the first 2–3 seconds should **look like a video**, not a title slide with a fade.
+4. If unsure between **bolder** and **tamer** **→ choose bolder** until the user says stop.
+
+---
+
+## Core principles (only these guardrails)
+
+- **Motion must match the *idea* (not be random):** wrong motion is bad. **Boring** motion is **also** bad when the user wanted a **video**.
+- **No arbitrary motion** = no motion that **conflicts** with the message or **hides the punchline**—it does **not** mean “subtle by default.”
+- **PPT is never the silent default.** Lecture/deck is an **opt-in** **genre**, not a shadow setting.
+
+---
+
+## Data vs presentation (who does what)
+
+| Layer | You control | When it still sucks on screen |
+|--------|------------|-------------------------------|
+| `plan.json` | `kind`, copy, `durationInFrames`, arcs, stagger, high-energy structure | You didn’t go **radical** enough here **or** the view is underbuilt. |
+| `*SlideView` | size, springs, loop motion, camera | **Not** the user’s fault. Open `remo-agent-slide-components`. |
+
+**Icons too small?** — Not fixable with JSON prayers. **Fix components** or add typed `iconScale` + wire it.
+
+---
+
+## Delivery style (explicit opt-**out** of radical)
+
+- **Default for “video / 科普 / Remotion / 爆款 / 解释”** without the word “幻灯片/少动/组会**纯**” → **Radical motion explainer** (table row: *Motion explainer*).
+- **Lecture / 极简 / 纯列表** require **explicit** user language. Until then, **do not** retreat to `bullets`.
+
+| Intent | `kind` mix | Bias |
+|--------|------------|------|
+| **Default (this repo): Motion explainer** | `explainerGraph` + `kineticText` w/ full arcs + `media` + `code` | **High**; long frames; many beats |
+| **Pop-sci graph-first** | `explainerGraph` heavy | Same |
+| **Lecture** | `kineticText`, `bullets` | Only when **said** |
+| **产品极简** | `cover`, `media` | **User said 极简** |
+
+**If style is unclear** → default **radical**; one question only: *「要猛一点还是收一点？」* If they shrug → **猛**.
+
+### Source of truth (paths)
 
 | Asset | Path |
-|-------|--------|
-| Type definitions | `src/types/videoPlan.ts` (`VideoPlanProps`, `PlanSlide`, `SlideKind`) |
-| Per-kind field matrix | [references/slide-kinds.md](references/slide-kinds.md) |
-| Machine + human index of `kind` | `src/slideRegistry.tsx` (`SLIDE_CATALOG`) |
-| Worked example JSON | `data/sample-video-plan.json` |
-| Per-video folder convention | [references/project-layout.md](references/project-layout.md) and `projects/README.md` |
-| Sidecar metadata type | `src/types/videoProjectMeta.ts` (`VideoProjectMeta` for `meta.json`) |
+|-------|------|
+| Types | `src/types/videoPlan.ts` |
+| Fields | [slide-kinds.md](references/slide-kinds.md) |
+| Catalog | `src/slideRegistry.tsx` |
 
-## Core principles (motion & narrative)
+## Skill map
 
-This repo treats **on-screen text and story beats** as the source of truth. Motion in the plan is **not** free decoration.
+| Concern | Skill |
+|---------|--------|
+| JSON / energy / structure | **this** |
+| Pixels, springs, new `kind` | `remo-agent-slide-components` |
+| `remotion render` | `remo-agent-remotion-render` |
+| TTS | `remo-agent-narration-tts` |
 
-- **Meaning first, motion second**: `durationInFrames`, `kineticText` fields (`contentArc`, `lineAnimation`, `staggerFrames`, `highlights`), and copy splits must **serve what the segment says** and its role in the arc (setup, pressure, rebuttal, closing, etc.). **Do not** pick arcs, line animations, or highlight phrases to “look cool” or to pad time if they **distract from** or **mis-state** the argument.
-- **No animation for its own sake**: If a beat is explanatory or delicate, prefer calmer `contentArc` / pacing over flashy defaults. Spectacle is allowed only when the **content** calls for stress, contrast, or closure—not by habit.
-- **Explicit `lineAnimation` only**: If you set `lineAnimation` without `contentArc`, still **justify** the choice from the line’s function in the story. Random or default-only motion is a plan smell.
+## Workflow (aggressive)
 
-Authoring and reviewing agents should hold each other to this: **understand the text, then choose the motion.**
+1. **Intent** — Unless they asked for 静态, assume **full motion** and plan **time** for it.
+2. **Beats** — Map to **highest-energy** `kind` that still fits; **refuse** to default to `bullets`.
+3. **Fill** all motion-relevant fields; **inflate** `durationInFrames` until motion reads; **cut** only on request.
+4. **Validate** JSON.
+5. **If preview is flat** — **escalate** to slide-components; do not “fix” with emptier JSON.
 
-## Delivery style (体裁 / 要求：多风格、须先对齐)
+## Quality gate (strict)
 
-**The data model supports every built-in `kind`—there is no single “correct” look for all videos.** The skill’s job is to **align** the `plan` with the user’s **delivery style** (风格 / 使用场景), not to force one template.
-
-- **If the user states a style** (e.g. 科普、组会/演讲、产品片、技术教程、纯媒体、混剪)—**follow that**. Do not override with a different genre.
-- **If the style is unclear**—**ask** (or infer from `meta.json` / brief / product context), then **confirm** before heavy authoring. A short note in the PR or `meta.json` `description` can record “delivery: 科普 / 组会 / …” for reviewers.
-
-**Common patterns (examples, not exhaustive):**
-
-| Intent | Typical `kind` mix | Notes |
-|--------|--------------------|--------|
-| **Pop-sci / 科普 / 概念解释 (visual-first)** | `cover`, `explainerGraph` (`imageUrl` 或 `iconId` + edges), `typewriterText`, sometimes `media` | 要「看见物 + 关系」时优先图与线；抽象段打字机。 |
-| **Lecture / 组会 / 演讲体 / 高信息** | `kineticText` (`contentArc` / `lineAnimation`), `bullets`, `code`, `media` | 多行跟读、动效行、条目共存；**合法的一等风格**。 |
-| **Product / 发布 / 极简** | `cover`, `media`, short `bullets` | 大图 + 少字 |
-| **Tutorial / 技术** | `code`, `bullets`, `media` | 步骤、可复制 |
-| **Hybrid** | 同一 `plan` 内**混用**不同 `kind` 按分镜切 | 例如一段科普 + 一段 Q&A 组会体 |
-
-### Heuristic: 科普/解释 (when the user **did not** specify another style)
-
-For **explanation / education** pieces where no other genre was specified, a **sensible default** (not a hard rule) is: **concrete** beats → `explainerGraph` (add **`imageUrl`** when assets exist); **abstract** beats → `typewriterText`; avoid treating **`kineticText` as the main workhorse** for that look—unless the user then asks for “组会/多行动效” instead.
-
-**Summary for that sub-case**: 能上图就图 + 线表关系；抽象再打字机；`kineticText` 作主角更适合演讲/组会体。
-
-## Workflow
-
-1. **Gather intent** — topic, **delivery style** (or confirm one—see **Delivery style**), target length, language, `ttsText`?, `meta` title/description, and **assets** (e.g. `imageUrl` list) if the style needs them.
-2. **Choose file layout** — for a full deliverable, create `projects/<slug>/` with `meta.json` + `plan.json` per [references/project-layout.md](references/project-layout.md). For a quick one-off, a standalone `plan.json` path is still valid.
-3. **Map beats to `kind`s** — match the **agreed** delivery style; use [references/slide-kinds.md](references/slide-kinds.md) for fields per `kind`.
-4. **Assemble `VideoPlanProps`** in `plan.json` — set `fps` / `width` / `height` if not default; ensure every slide has `durationInFrames` ≥ 1; optional `narrationAudioUrl` only after audio exists (see `remo-agent-narration-tts`).
-5. **Validate** — JSON parses; all `kind` values are in the `PlanSlide` union; if `meta.json` is used, `slug` matches the directory name.
-6. **Hand off** — render: `remo-agent-remotion-render`; new layouts: `remo-agent-slide-components`.
-
-## Quality gate
-
-Before sharing or committing a plan file:
-
-- [ ] File is valid JSON (not JavaScript, no trailing comments unless your toolchain explicitly allows them—Remotion JSON props do not).
-- [ ] Every slide has `kind`, `durationInFrames`, and fields required for that `kind` per [references/slide-kinds.md](references/slide-kinds.md).
-- [ ] Remote `imageUrl` values are reachable HTTPS URLs the render environment can fetch, or the user accepts render-time failure.
-- [ ] Sum of `durationInFrames` matches the intended run time (optional sanity: total frames / fps ≈ seconds).
-- [ ] If using `projects/<slug>/`, `meta.json` includes `title`, `description`, and `slug === "<slug>"` — and **title/description** use the **intended display language** (e.g. 中文标题与简介 for Chinese deliverables), not empty English placeholders.
-- [ ] **Delivery style** is **explicit, inferred with user confirmation, or** (only for 科普/解释) applied using the **heuristic** in **Delivery style**—and the chosen `kind`s **match that style**, not a different genre by accident.
-- [ ] If the style is **科普/解释 (heuristic)**: where a beat is **naturally a graph of things + relations**, prefer **`explainerGraph`**; **abstract** beats → **`typewriterText`**; do not default the whole run to **`kineticText`** unless the user wanted **lecture/组会** motion.
-- [ ] For `kind: "kineticText"`, `contentArc` (or, if used alone, `lineAnimation`) and `highlights` **match the narrative job** of that beat—**not** decoration for its own sake (see **Core principles** above).
-
-## Failure modes
-
-| Symptom | Likely cause | Action |
-|---------|----------------|--------|
-| Render or Studio rejects props | Malformed JSON or wrong `kind` / missing field | Re-check against `videoPlan.ts` and [slide-kinds.md](references/slide-kinds.md) |
-| Image slide blank or error | Bad `imageUrl`, CORS, or offline | Fix URL; test in Studio |
-| “Unknown kind” at type level | New `kind` in JSON but types not updated | `remo-agent-slide-components` |
+- [ ] No **BANNED** behavior above.
+- [ ] If `kineticText`: `contentArc` or deliberate `lineAnimation` **and** `stagger` **set** (no ghost defaults).
+- [ ] Durations: **enough** frames that **at least one** full motion “phrase” (graph draw, stagger pass) **completes visibly**.
+- [ ] `meta` language matches audience when using `meta.json`.
+- [ ] PPT look → **acknowledge** implementation work; **don’t** ship emptier data as the fix.
 
 ## Do not
 
-- Add new `kind` values in JSON only—registry and types must be updated together (`remo-agent-slide-components`).
-- Put JSX, imports, or Remotion API calls in a “plan” file; plans are data only.
-- Commit secrets (API keys) into plan JSON.
+- New `kind` in JSON only (pair with slide-components).
+- Secrets in `plan.json`.
 
 ## References
 
-| Document | Content |
-|----------|---------|
-| [references/slide-kinds.md](references/slide-kinds.md) | Per-`kind` field reference and notes |
-| [references/project-layout.md](references/project-layout.md) | `projects/<slug>/` + `meta.json` + `plan.json` + `out/` |
+- [slide-kinds.md](references/slide-kinds.md) | [project-layout](references/project-layout.md)
 
-## Related skills
+## Related
 
-- `remo-agent-slide-components` — new slide `kind` or UI
-- `remo-agent-remotion-render` — MP4 output
-- `remo-agent-narration-tts` — `narrationAudioUrl` and TTS handoff
+- `remo-agent-slide-components` — **bigger, faster, loopier** defaults

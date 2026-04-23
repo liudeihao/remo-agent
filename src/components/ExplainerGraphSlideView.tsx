@@ -4,7 +4,11 @@ import { SemanticIconById, type SemanticIconName } from "../lib/semanticIcons";
 import type { ExplainerGraphSlide } from "../types/videoPlan";
 import { slideChrome, SlideChrome } from "./SlideChrome";
 
-const graphH = 520;
+/** Fills frame — graph is the hero, not a PPT inset */
+const GRAPH_MIN_H = 680;
+const NODE_CARD_W = 320;
+const ICON_BOX = 220;
+const ICON_SIZE = 170;
 
 function nodeVisualId(n: { imageUrl?: string; iconId?: SemanticIconName }): SemanticIconName {
   if (n.imageUrl) {
@@ -31,7 +35,7 @@ export const ExplainerGraphSlideView: React.FC<{
     : 1;
   const stagger = slide.revealStaggerFrames ?? 12;
   const hasTitle = Boolean(slide.title?.trim());
-  const contentStart = hasTitle ? 18 : 0;
+  const contentStart = hasTitle ? 22 : 0;
   const nodes = slide.nodes;
   const edges = slide.edges;
 
@@ -43,7 +47,7 @@ export const ExplainerGraphSlideView: React.FC<{
     if (a < 0 || b < 0) {
       return 0;
     }
-    return Math.max(nodeStartFrame(a), nodeStartFrame(b)) + 6;
+    return Math.max(nodeStartFrame(a), nodeStartFrame(b)) + 8;
   };
 
   const edgeStartFrame = (e: { from: string; to: string }) => bothReady(e.from, e.to);
@@ -55,6 +59,15 @@ export const ExplainerGraphSlideView: React.FC<{
     }));
   }, [nodes]);
 
+  const titleY = spring({
+    frame: Math.max(0, frame - 2),
+    fps,
+    config: { damping: 14, stiffness: 100, mass: 0.45 },
+    from: 28,
+    to: 0,
+  });
+  const titleOp = interpolate(frame, [0, 14], [0, 1], { extrapolateRight: "clamp" });
+
   return (
     <SlideChrome>
       <div
@@ -63,18 +76,21 @@ export const ExplainerGraphSlideView: React.FC<{
           display: "flex",
           flexDirection: "column",
           justifyContent: "center",
-          gap: 16,
+          gap: 8,
           opacity: outro,
         }}
       >
         {hasTitle && slide.title ? (
           <div
             style={{
-              fontSize: 40,
-              fontWeight: 700,
+              fontSize: 46,
+              fontWeight: 800,
               color: slideChrome.ink,
-              maxWidth: 1500,
-              marginBottom: 4,
+              maxWidth: 1600,
+              marginBottom: 8,
+              transform: `translateY(${titleY}px)`,
+              opacity: titleOp,
+              letterSpacing: "-0.02em",
             }}
           >
             {slide.title}
@@ -85,7 +101,7 @@ export const ExplainerGraphSlideView: React.FC<{
           style={{
             position: "relative",
             width: "100%",
-            minHeight: graphH,
+            minHeight: GRAPH_MIN_H,
             flex: 1,
           }}
         >
@@ -99,6 +115,7 @@ export const ExplainerGraphSlideView: React.FC<{
               left: 0,
               top: 0,
               pointerEvents: "none",
+              filter: "drop-shadow(0 0 12px rgba(53,184,255,0.15))",
             }}
             aria-hidden
           >
@@ -116,8 +133,12 @@ export const ExplainerGraphSlideView: React.FC<{
               const startF = edgeStartFrame(e);
               const t = frame - startF;
               const len = Math.hypot(p1.x - p0.x, p1.y - p0.y);
-              const vis = t < 0 ? 0 : spring({ frame: t, fps, config: { damping: 20, stiffness: 120 }, from: 0, to: 1 });
+              const vis = t < 0 ? 0 : spring({ frame: t, fps, config: { damping: 18, stiffness: 140 }, from: 0, to: 1 });
               const draw = vis * len;
+              const pulse =
+                t > 12 && vis > 0.92
+                  ? 0.55 + 0.45 * (0.5 + 0.5 * Math.sin(frame * 0.18 + ei * 1.2))
+                  : 0.5 + 0.45 * vis;
               return (
                 <g key={`${e.from}-${e.to}-${ei}`}>
                   <line
@@ -126,12 +147,12 @@ export const ExplainerGraphSlideView: React.FC<{
                     x2={p1.x}
                     y2={p1.y}
                     stroke={slideChrome.border}
-                    strokeWidth="5"
+                    strokeWidth="14"
                     strokeLinecap="round"
                     pathLength={len}
                     strokeDasharray={`${len}`}
                     strokeDashoffset={len - draw}
-                    opacity={0.5 + 0.45 * vis}
+                    opacity={0.35 + 0.5 * pulse}
                   />
                   <line
                     x1={p0.x}
@@ -139,12 +160,12 @@ export const ExplainerGraphSlideView: React.FC<{
                     x2={p1.x}
                     y2={p1.y}
                     stroke={slideChrome.accent}
-                    strokeWidth="2.2"
+                    strokeWidth="4"
                     strokeLinecap="round"
                     pathLength={len}
                     strokeDasharray={`${len}`}
                     strokeDashoffset={len - draw}
-                    opacity={0.35 + 0.5 * vis}
+                    opacity={0.4 + 0.55 * pulse}
                   />
                 </g>
               );
@@ -154,9 +175,28 @@ export const ExplainerGraphSlideView: React.FC<{
           {nodes.map((n, i) => {
             const t0 = nodeStartFrame(i);
             const t = frame - t0;
-            const o = t < 0 ? 0 : spring({ frame: t, fps, config: { damping: 16, mass: 0.5, stiffness: 100 }, from: 0, to: 1 });
-            const s = 0.88 + 0.12 * o;
+            const o = t < 0
+              ? 0
+              : spring({
+                  frame: t,
+                  fps,
+                  config: { damping: 12, mass: 0.55, stiffness: 120 },
+                  from: 0,
+                  to: 1,
+                });
+            const enterScale = t < 0
+              ? 0.2
+              : spring({
+                  frame: t,
+                  fps,
+                  config: { damping: 9, mass: 0.4, stiffness: 180 },
+                  from: 0.2,
+                  to: 1,
+                });
             const visId = nodeVisualId(n);
+            const float = t > 0 && o > 0.88 ? Math.sin((frame + i * 24) * 0.11) * 7 : 0;
+            const breathe = t > 0 && o > 0.9 ? 1 + 0.04 * Math.sin((frame + i * 18) * 0.14) : 1;
+            const wobble = t > 0 && o > 0.9 ? Math.sin((frame + i * 9) * 0.08) * 0.4 : 0;
             return (
               <div
                 key={n.id}
@@ -164,32 +204,33 @@ export const ExplainerGraphSlideView: React.FC<{
                   position: "absolute",
                   left: `${n.x * 100}%`,
                   top: `${n.y * 100}%`,
-                  transform: `translate(-50%, -50%) scale(${t < 0 ? 0.9 : s})`,
+                  transform: `translate(-50%, calc(-50% + ${float}px)) scale(${enterScale * breathe}) rotate(${wobble}deg)`,
                   opacity: t < 0 ? 0 : o,
-                  width: 200,
-                  minHeight: 200,
+                  width: NODE_CARD_W,
+                  minHeight: NODE_CARD_W * 0.95,
                   display: "flex",
                   flexDirection: "column",
                   alignItems: "center",
                   justifyContent: "center",
-                  gap: 8,
-                  background: "rgba(14, 16, 22, 0.92)",
-                  border: `1px solid ${slideChrome.border}`,
-                  borderRadius: 20,
-                  padding: 16,
-                  boxShadow: "0 16px 48px rgba(0,0,0,0.35)",
+                  gap: 12,
+                  background: "linear-gradient(165deg, rgba(22,26,36,0.97) 0%, rgba(10,12,18,0.95) 100%)",
+                  border: `2px solid ${slideChrome.border}`,
+                  borderRadius: 24,
+                  padding: 18,
+                  boxShadow: `0 24px 64px rgba(0,0,0,0.5), 0 0 0 1px rgba(53,184,255,0.12), inset 0 1px 0 rgba(255,255,255,0.06)`,
                 }}
               >
                 <div
                   style={{
-                    width: 120,
-                    height: 120,
-                    borderRadius: 16,
+                    width: ICON_BOX,
+                    height: ICON_BOX,
+                    borderRadius: 20,
                     overflow: "hidden",
                     display: "flex",
                     alignItems: "center",
                     justifyContent: "center",
-                    background: "rgba(30, 34, 44, 0.9)",
+                    background: "radial-gradient(circle at 30% 25%, rgba(53,184,255,0.12), rgba(20,24,32,0.95))",
+                    boxShadow: "inset 0 0 40px rgba(0,0,0,0.35)",
                   }}
                 >
                   {n.imageUrl ? (
@@ -198,16 +239,18 @@ export const ExplainerGraphSlideView: React.FC<{
                       style={{ width: "100%", height: "100%", objectFit: "cover" }}
                     />
                   ) : visId !== "none" ? (
-                    <SemanticIconById id={visId} size={96} />
+                    <SemanticIconById id={visId} size={ICON_SIZE} />
                   ) : null}
                 </div>
                 {n.shortLabel ? (
                   <div
                     style={{
-                      fontSize: 18,
-                      color: slideChrome.muted,
+                      fontSize: 20,
+                      fontWeight: 600,
+                      color: slideChrome.ink,
                       textAlign: "center",
                       lineHeight: 1.25,
+                      textShadow: "0 1px 12px rgba(0,0,0,0.6)",
                     }}
                   >
                     {n.shortLabel}
@@ -228,28 +271,32 @@ export const ExplainerGraphSlideView: React.FC<{
             if (!p0 || !p1) {
               return null;
             }
-            const startF = edgeStartFrame(e) + 10;
+            const startF = edgeStartFrame(e) + 8;
             const t = frame - startF;
-            const o = t < 0 ? 0 : interpolate(t, [0, 8], [0, 1], { extrapolateRight: "clamp" });
+            const pop = t < 0 ? 0 : spring({ frame: t, fps, config: { damping: 10, stiffness: 200 }, from: 0, to: 1 });
+            const o = t < 0 ? 0 : interpolate(t, [0, 10], [0, 1], { extrapolateRight: "clamp" });
             const mx = ((p0.x + p1.x) / 2 / 1000) * 100;
             const my = ((p0.y + p1.y) / 2 / 1000) * 100;
-            return o > 0.05 ? (
+            const labelBob = t > 5 ? Math.sin((frame + ei * 5) * 0.1) * 3 : 0;
+            return o > 0.02 ? (
               <div
                 key={`lbl-${e.from}-${e.to}-${ei}`}
                 style={{
                   position: "absolute",
                   left: `${mx}%`,
                   top: `${my}%`,
-                  transform: "translate(-50%, -50%)",
-                  fontSize: 19,
-                  color: slideChrome.muted,
-                  background: "rgba(6,6,7,0.85)",
-                  padding: "4px 10px",
-                  borderRadius: 8,
-                  border: `1px solid ${slideChrome.border}`,
-                  opacity: o,
-                  maxWidth: 200,
+                  transform: `translate(-50%, calc(-50% + ${labelBob}px)) scale(${0.7 + 0.3 * pop})`,
+                  fontSize: 21,
+                  fontWeight: 600,
+                  color: slideChrome.accent,
+                  background: "rgba(4,5,8,0.92)",
+                  padding: "8px 14px",
+                  borderRadius: 10,
+                  border: `1px solid rgba(53,184,255,0.45)`,
+                  opacity: o * pop,
+                  maxWidth: 280,
                   textAlign: "center",
+                  boxShadow: "0 8px 32px rgba(0,0,0,0.45)",
                 }}
               >
                 {e.label}

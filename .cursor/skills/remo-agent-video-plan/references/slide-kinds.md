@@ -2,7 +2,7 @@
 
 **Normative source**: `src/types/videoPlan.ts`. This file is a readable mirror for agents; on conflict, the TypeScript types win.
 
-**多风格支持**：`PlanSlide` 联合中的每一种 `kind` 都是**一等**选项；**没有**全仓库唯一的“正确”风格。`plan.json` 应匹配用户约定的 **Delivery style**（科普、组会/演讲、产品、技术教程、混合等）—见 `remo-agent-video-plan` Skill 中 **Delivery style**；**科普向**的默认定式见该节 **Heuristic**（仅当未指定其他体裁时）。
+**激进默认（v0.4）**：本仓库的默认是 **动效、大画幅、别保守**——非用户明确要求「静态/组会/极简」时，**禁止**把分镜当成「带配音的 PPT」。**JSON** 定节拍与 `kind`；**尺寸/弹簧/持续运动** 在 `*SlideView`。**BANNED / REQUIRED** 与 **RED LINE** 见两份 Skill 正文。
 
 ## Common fields (all kinds)
 

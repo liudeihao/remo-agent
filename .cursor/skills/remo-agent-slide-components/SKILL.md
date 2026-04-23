@@ -1,96 +1,107 @@
 ---
 name: remo-agent-slide-components
 description: >-
-  Extends or maintains Remotion slide UI in remo-agent: new PlanSlide kinds, *SlideView components,
-  SLIDE_CATALOG, and renderSlideContent in slideRegistry. Triggers: new slide type, new kind, edit
-  CoverSlideView, slideRegistry, videoPlan types, "add a layout", reusable Remotion slide. All
-  registered *SlideView kinds are first-class; plan authors select `kind` per remo-agent-video-plan
-  **Delivery style** (or explicit user choice). Does not author JSON plans (remo-agent-video-plan) or
-  run CLI render (remo-agent-remotion-render).
-version: 0.2.3
+  **RADICAL / NOT CONSERVATIVE.** *SlideView code owns scale & motion. Default: HERO SIZES, strong
+  springs, continuous idle motion, camera move on media, scan/glow on code. "Looks like PPT" = BUG
+  in this layer until proven user asked 极简. v0.4.0
+version: 0.4.0
 metadata:
   project: remo-agent
 ---
 
 # remo-agent — Slide components & registry (presentation layer)
 
+## **RED LINE: boring = bug**
+
+- **Do not ship conservative UI.** A view that only fades in once and then **dies** is **unacceptable** for the default remo-agent use case.
+- **Small focal elements on 1920p = bug** (icons, cards, main image, code block) unless the user explicitly wanted **miniature / deck** look.
+- **“Subtle” is not a compliment here** unless the **product** is explicitly minimal. Default to **loud, readable, kinetic**.
+
+If the user’s video still feels like PowerPoint, **the code is where you fix it**—not their JSON tone, not their “lack of prompt.”
+
 ## Scope
 
-- **In scope**: TypeScript/React that renders each `PlanSlide` variant, the registry that maps `kind` → component, and `SLIDE_CATALOG` metadata for discoverability. Shared chrome (`SlideChrome`, `src/lib/*`) and entrance motion used by multiple views.
-- **Out of scope**: contents of `VideoPlanProps` JSON files, `remotion render` invocation, and TTS providers.
+- `*SlideView` implementations, `slideRegistry`, `SLIDE_CATALOG`, `PlanSlide` types for behavior that **belongs in code**, **chrome**, shared motion (`SlideChrome`, `src/lib/*`).
 
-## Core principles (motion & presentation)
+- **Out of scope:** authoring `plan.json` text, running `remotion render`.
 
-Narrative **meaning** still drives choices (see `remo-agent-video-plan` **Core principles (motion & narrative)**). **All** `*SlideView` implementation paths are **valid**; which ones appear in a video follows `remo-agent-video-plan` **Delivery style** (e.g. 科普 → graph + typewriter; 组会/演讲 → `kineticText` + bullets—both supported).
+---
 
-- **Semantics drive the pixels**: In any `*SlideView` and shared motion, new behavior must be **grounded in the beat’s job** in the story. **Do not** add spectacle unrelated to the agreed delivery style.
-- **Plan contract**: Views implement what `VideoPlanProps` and types describe. New motion or visual modes require **type + registry +** `remo-agent-video-plan` [references/slide-kinds.md](../remo-agent-video-plan/references/slide-kinds.md) updates; they are not a side channel for authorless defaults.
+## Mandates (read like law)
 
-## Position in the pipeline
+1. **Hero scale at 1920×1080:** primary visuals **fill the safe area**. Icons are **hundreds of px** on screen for graph/kinetic, not deck thumbnails.
+2. **Two-layer motion minimum:** (a) **entrance** with overshoot / spring, (b) **ongoing** motion (float, pulse, parallax, line pulse, image breathe, code scan) for the full clip **unless** the `kind` is intentionally static.
+3. **SemanticIconById and containers** must **actually** scale art to `size`—never render 22px vectors inside a 200px box.
+4. **When in doubt, add motion**; only remove on **explicit** “static slide” spec.
 
-`VideoFromPlan` does **not** import concrete `*SlideView` by `kind` inline. It calls `renderSlideContent` in `src/slideRegistry.tsx` only. Any new on-screen mode must be registered there—no parallel switch in the composition.
+## Core principles (short)
+
+- **Meaning, not timidity:** Animate in ways that **teach** (contrast, order, focus). **Timid** animation is a **separate** failure from **nonsensical** animation.
+- **Types are contract:** new visible behavior → `videoPlan.ts` + view + [slide-kinds.md](../remo-agent-video-plan/references/slide-kinds.md).
+- **Pair with** `remo-agent-video-plan` **RADICAL** bias: no empty arcs on the data side, no single-fade morgue on the code side.
+
+## Pipeline
+
+`VideoFromPlan` → `renderSlideContent` in `src/slideRegistry.tsx` only.
 
 ## When to use
 
-- Adding or renaming a **discriminant** on `PlanSlide` (`kind`).
-- Creating `src/components/<Name>SlideView.tsx` or changing styling/layout of an existing view.
-- Updating `SLIDE_CATALOG` or the switch in `renderSlideContent`.
-- Refactoring shared layout tokens (`slideChrome`, fade helpers, highlight utilities).
+- New/renamed `kind`.
+- **Any** report of: tiny icons, no motion, one fade, PPT, “boring” — **this skill**, not “user should prompt harder.”
+- Refactors to **raise** the energy floor of defaults.
 
 ## Prerequisites
 
-- Node.js and dependencies installed at repo root (`npm install`).
-- `npx tsc --noEmit` must pass before the change is considered complete.
+`npm install`; `npx tsc --noEmit` before saying done.
 
 ## Source of truth
 
 | Asset | Path |
-|-------|--------|
-| Discriminated union and slide shapes | `src/types/videoPlan.ts` |
-| Registry, catalog, `renderSlideContent` | `src/slideRegistry.tsx` |
-| Barrel exports for views | `src/components/index.ts` |
-| Composition (no per-kind branches) | `src/compositions/VideoFromPlan.tsx` |
-| Extension checklist (detailed) | [references/extension.md](references/extension.md) |
+|-------|------|
+| `PlanSlide` | `src/types/videoPlan.ts` |
+| Registry | `src/slideRegistry.tsx` |
+| Exports | `src/components/index.ts` |
+| Extension checklist | [extension.md](references/extension.md) |
 
 ## Workflow
 
-1. **Types** — Add or adjust `XxxSlide` in `src/types/videoPlan.ts`; extend `PlanSlide` union. See [references/extension.md](references/extension.md) §1.
-2. **View** — Implement `React.FC<{ slide: XxxSlide }>`; reuse `SlideChrome` and patterns from existing `*SlideView.tsx` files.
-3. **Export** — Add the component to `src/components/index.ts`.
-4. **Register** — Update `SLIDE_CATALOG` and add a `case` in `renderSlideContent` so `assertNever` in the `default` branch remains unreachable for valid slides.
-5. **Verify** — `npx tsc --noEmit`. Optionally `npm run dev` and load a test JSON in Studio.
-6. **Document** — Update `remo-agent-video-plan` [references/slide-kinds.md](../remo-agent-video-plan/references/slide-kinds.md) if fields changed (same PR or follow-up).
+1. Types.
+2. View: **aggressive** motion + **large** focal layout; verify in **Studio** at full composition size.
+3. Register everywhere.
+4. `tsc` + visual **stress** test.
+5. slide-kinds if the **public** contract changed.
 
-## Quality gate
+## Quality gate (non-negotiable)
 
-- [ ] New `kind` appears in: `videoPlan.ts`, new `*SlideView`, `slideRegistry.tsx` (both catalog and switch), and [slide-kinds.md](../remo-agent-video-plan/references/slide-kinds.md) if public contract changed.
-- [ ] No new `if (slide.kind)` chain inside `VideoFromPlan` for production slide types.
-- [ ] Slide components remain **presentational** (no fetches, no secrets, no TTS calls).
-- [ ] New UI or refactors **match the** `plan`’s **delivery style** (from user or from **Delivery style** in `remo-agent-video-plan`); e.g. do not force graph-only if the product is `kineticText`-led **on purpose**.
-- [ ] Motion or kinetic UI changes **serve on-screen meaning**; align with `remo-agent-video-plan` (no spectacle that the copy and agreed style do not support).
+- [ ] **Studio pass:** motion **reads**; focal layer **not** phone-sized in frame.
+- [ ] Ongoing motion exists for **default** `kind`s (graph/kinetic/media/code) — not only frame 0–15.
+- [ ] PPT symptom → open `*SlideView` and **increase** energy before touching user copy.
+- [ ] `SLIDE_CATALOG` + `assertNever` complete.
+- [ ] No secrets; no TTS in views.
 
-## Failure modes
+## Failure → fix
 
-| Symptom | Likely cause | Action |
-|---------|----------------|--------|
-| TypeScript error on `assertNever` | Unhandled `kind` in `renderSlideContent` | Add `case` and view |
-| Studio shows old UI | Caching or wrong composition props | Hard refresh; confirm `VideoFromPlan` + latest JSON |
-| JSON validates but runtime error | Mismatch between types and view expectations | Align field types in `videoPlan.ts` with component props |
+| Symptom | Fix |
+|---------|-----|
+| Tiny icons | Scale SVG path + layout; add props if needed |
+| Static after intro | **Add** loops / pulse / parallax / scan |
+| `assertNever` | Wire `case` + view |
+
+## BANNED (implementation)
+
+- Registering a `kind` with **one** `useSlideEntrance` and nothing else in the main layout (unless the **kind** is **explicitly** static-by-design in product).
+- Suggesting the user “write a stronger plan” when the component caps icon size or kills motion.
 
 ## Do not
 
-- Register a view without a `SLIDE_CATALOG` entry (agents rely on the catalog to discover `kind`s).
-- Embed API keys, side-effectful I/O, or TTS in slide views.
-- Branch on `kind` in `VideoFromPlan`—keep routing in `renderSlideContent` only.
+- Skip `SLIDE_CATALOG`.
+- Branch in `VideoFromPlan` on `kind`.
 
 ## References
 
-| Document | Content |
-|----------|---------|
-| [references/extension.md](references/extension.md) | Ordered checklist and naming conventions |
+- [extension.md](references/extension.md)
 
-## Related skills
+## Related
 
-- `remo-agent-video-plan` — JSON and field reference for authors
-- `remo-agent-remotion-render` — Studio and MP4
-- `remo-agent-narration-tts` — audio (composition already supports `narrationAudioUrl`)
+- `remo-agent-video-plan` — **RADICAL** data bias
+- `remo-agent-remotion-render` — output MP4

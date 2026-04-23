@@ -2,6 +2,14 @@
 
 把 **结构化视频计划**（JSON）用 Remotion 渲染成 **可批量复用的 1920×1080 视频**：封面、要点、配图、代码块；可选整段旁白音频。本仓库的 **视频计划（VideoPlan）** 是通用数据模型，不限于「情报简报」；Agent 在合适场景下通过项目内 **Cursor skills**（`.cursor/skills/`）自主使用「写稿 →（外置 TTS）→ 出片」流程。
 
+## 理念：激进动效（Remotion 本位）
+
+本仓库的**默认产品**是 **时间轴上的动效片**，不是「带配音的静态 PPT」。
+
+- **数据层**（`plan.json`）应优先填满会动的字段（如 `kineticText` 的 `contentArc`、足够的 `durationInFrames`、优先 `explainerGraph` / `media` / `code` 等），**别用空参当「保险」**。
+- **实现层**（`*SlideView`）负责**画幅、弹簧、持续运动**；**小图标、单淡入、像 PPT** 是实现问题，**不是**用户 prompt 没写清。
+- 详细 **BANNED / REQUIRED、RED LINE** 见 **`.cursor/skills/remo-agent-video-plan/SKILL.md`** 与 **`remo-agent-slide-components/SKILL.md`（v0.4+）**。
+
 ## 前置
 
 - Node 18+（已用 Node 22 做类型与脚本验证）
@@ -42,7 +50,7 @@ npm run render:project -- my-video-slug
 - 主类型：`VideoPlanProps`（`src/types/videoPlan.ts`）。
 - 顶层：`fps`、`width`、`height`（可选）、`slides[]`、可选 `narrationAudioUrl`（整段旁白，HTTPS 或 `file:`）。
 - 每页 `slide`：必有 `kind`、`durationInFrames`；可选 `ttsText`（给上游 TTS 用，成片可不内嵌 TTS）。
-- `kind`：`cover` | `bullets` | `media` | `code` | `kineticText`（动效/科普字，见 `SLIDE_CATALOG` 与 `KineticTextSlideView`）。
+- `kind`：以 `src/slideRegistry.tsx` 的 `SLIDE_CATALOG` 为准（含 `kineticText`、`explainerGraph`、`typewriterText` 等；见各 `*SlideView`）。
 
 示例：`data/sample-video-plan.json`。
 
@@ -60,8 +68,8 @@ npm run render:project -- my-video-slug
 
 本仓库在 `.cursor/skills/` 下提供项目级 **Agent Skills**（主文件 `SKILL.md` + 各包内 `references/*.md` 细表，风格对齐常见开源 skill 仓库的分层写法），对应「文案数据 → 组件/注册表 → 出片 → 旁白 handoff」：
 
-- `remo-agent-video-plan` — `VideoPlanProps` JSON、字段与 `kind` 选用
-- `remo-agent-slide-components` — `*SlideView`、`slideRegistry`、`SLIDE_CATALOG` 扩展
+- `remo-agent-video-plan` — `VideoPlanProps` JSON、字段与 `kind` 选用（**默认激进动效**，见该 Skill v0.4+）
+- `remo-agent-slide-components` — `*SlideView`、`slideRegistry`、`SLIDE_CATALOG` 扩展（**像素与弹簧**，见该 Skill v0.4+）
 - `remo-agent-remotion-render` — Remotion Studio、`remotion render`、MP4
 - `remo-agent-narration-tts` — `ttsText` / 混音后 `narrationAudioUrl` 的约定与保密边界
 

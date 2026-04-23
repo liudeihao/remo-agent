@@ -13,6 +13,16 @@
 | 其他              | 可放 TTS 中间文件、旁白 `wav`、封面图、**notes.md** 等；命名自定，但勿与下两项冲突。         |
 
 
+## 理念：写 `plan.json` 时别保守
+
+本仓 Remotion 成片的**默认**是 **动效足、时间够、少像 PPT**；除非发布方/作者**明确要求**「极简、组会、几乎不动」。
+
+- **多**用会随时间变样的 `kind`（如 `explainerGraph`、`kineticText` 且填好弧与 stagger、`media` 等），**少**用纯列表体搪塞整支片子。
+- 每镜给足 **`durationInFrames`**，让弹簧、画线、分步入场**看得完**；过短＝动效被切成闪光。
+- 画面仍像幻灯片时，除改 `plan` 外，要检查 `*SlideView` 的**尺寸与持续运动**（见 **`.cursor/skills/remo-agent-slide-components/SKILL.md` v0.4+**）。
+
+与根目录 `README.md` 的 **「理念：激进动效」** 同一条线。
+
 ## 类型与语言
 
 - `meta.json` 的 TypeScript 类型为 `VideoProjectMeta`（见 `src/types/videoProjectMeta.ts`）。
