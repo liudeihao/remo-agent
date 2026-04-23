@@ -3,10 +3,11 @@ name: remo-agent-slide-components
 description: >-
   Extends or maintains Remotion slide UI in remo-agent: new PlanSlide kinds, *SlideView components,
   SLIDE_CATALOG, and renderSlideContent in slideRegistry. Triggers: new slide type, new kind, edit
-  CoverSlideView, slideRegistry, videoPlan types, "add a layout", reusable Remotion slide. Kinetic
-  motion and visuals must follow **text-first** semantics (see Core principles in body). Does not
-  author JSON plans (remo-agent-video-plan) or run CLI render (remo-agent-remotion-render).
-version: 0.2.1
+  CoverSlideView, slideRegistry, videoPlan types, "add a layout", reusable Remotion slide. All
+  registered *SlideView kinds are first-class; plan authors select `kind` per remo-agent-video-plan
+  **Delivery style** (or explicit user choice). Does not author JSON plans (remo-agent-video-plan) or
+  run CLI render (remo-agent-remotion-render).
+version: 0.2.3
 metadata:
   project: remo-agent
 ---
@@ -20,10 +21,10 @@ metadata:
 
 ## Core principles (motion & presentation)
 
-Implementation must follow the same **text-first** rule as `remo-agent-video-plan` (see its **Core principles (motion & narrative)**).
+Narrative **meaning** still drives choices (see `remo-agent-video-plan` **Core principles (motion & narrative)**). **All** `*SlideView` implementation paths are **valid**; which ones appear in a video follows `remo-agent-video-plan` **Delivery style** (e.g. 科普 → graph + typewriter; 组会/演讲 → `kineticText` + bullets—both supported).
 
-- **Semantics drive the pixels**: In `*SlideView` and shared motion (e.g. `src/lib/kineticArc.ts`, `KineticTextSlideView`, `semanticLine` / `semanticIcons`), new timing, easings, layout modes, and icon behavior must be **grounded in what the line is doing** in the story (e.g. tension, chain of causes, head-to-head contrast, metaphor). **Do not** add or reuse a “spicy” animation on unrelated copy just because it is available.
-- **Plan contract**: Views implement what `VideoPlanProps` and types describe. New motion or visual modes require **type + registry +** `remo-agent-video-plan` [references/slide-kinds.md](../remo-agent-video-plan/references/slide-kinds.md) updates; they are not a side channel for authorless spectacle.
+- **Semantics drive the pixels**: In any `*SlideView` and shared motion, new behavior must be **grounded in the beat’s job** in the story. **Do not** add spectacle unrelated to the agreed delivery style.
+- **Plan contract**: Views implement what `VideoPlanProps` and types describe. New motion or visual modes require **type + registry +** `remo-agent-video-plan` [references/slide-kinds.md](../remo-agent-video-plan/references/slide-kinds.md) updates; they are not a side channel for authorless defaults.
 
 ## Position in the pipeline
 
@@ -65,7 +66,8 @@ Implementation must follow the same **text-first** rule as `remo-agent-video-pla
 - [ ] New `kind` appears in: `videoPlan.ts`, new `*SlideView`, `slideRegistry.tsx` (both catalog and switch), and [slide-kinds.md](../remo-agent-video-plan/references/slide-kinds.md) if public contract changed.
 - [ ] No new `if (slide.kind)` chain inside `VideoFromPlan` for production slide types.
 - [ ] Slide components remain **presentational** (no fetches, no secrets, no TTS calls).
-- [ ] Motion or kinetic UI changes **serve on-screen meaning**; align with the **text-first** rule in `remo-agent-video-plan` (no spectacle that the copy does not support).
+- [ ] New UI or refactors **match the** `plan`’s **delivery style** (from user or from **Delivery style** in `remo-agent-video-plan`); e.g. do not force graph-only if the product is `kineticText`-led **on purpose**.
+- [ ] Motion or kinetic UI changes **serve on-screen meaning**; align with `remo-agent-video-plan` (no spectacle that the copy and agreed style do not support).
 
 ## Failure modes
 

@@ -7,4 +7,6 @@ export { CodeSlideView } from "./CodeSlideView";
 export { CoverSlideView } from "./CoverSlideView";
 export { MediaSlideView } from "./MediaSlideView";
 export { KineticTextSlideView } from "./KineticTextSlideView";
+export { ExplainerGraphSlideView } from "./ExplainerGraphSlideView";
+export { TypewriterTextSlideView } from "./TypewriterTextSlideView";
 export { SlideChrome, slideChrome } from "./SlideChrome";

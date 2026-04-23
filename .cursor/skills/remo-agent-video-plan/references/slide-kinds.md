@@ -2,11 +2,13 @@
 
 **Normative source**: `src/types/videoPlan.ts`. This file is a readable mirror for agents; on conflict, the TypeScript types win.
 
+**多风格支持**：`PlanSlide` 联合中的每一种 `kind` 都是**一等**选项；**没有**全仓库唯一的“正确”风格。`plan.json` 应匹配用户约定的 **Delivery style**（科普、组会/演讲、产品、技术教程、混合等）—见 `remo-agent-video-plan` Skill 中 **Delivery style**；**科普向**的默认定式见该节 **Heuristic**（仅当未指定其他体裁时）。
+
 ## Common fields (all kinds)
 
 | Field | Type | Required | Notes |
 |-------|------|----------|--------|
-| `kind` | string (discriminant) | yes | One of: `cover`, `bullets`, `media`, `code`, `kineticText` |
+| `kind` | string (discriminant) | yes | `cover` \| `bullets` \| `media` \| `code` \| `kineticText` \| `explainerGraph` \| `typewriterText` |
 | `durationInFrames` | number | yes | Integer ≥ 1. Total duration = sum over `slides` |
 | `ttsText` | string | no | Spoken script for external TTS; not rendered on screen |
 
@@ -56,9 +58,34 @@
 | `language` | no | Shown as a badge; not a highlighter id |
 | `highlights` | no | Substrings in `code` to tint |
 
-### `kind: "kineticText"`（科普/动效字）
+### `kind: "explainerGraph"`（科普向：图与关系线）
 
-**原则**：动效、叙事弧、高亮词须**由文案与分镜在故事里的作用**反推，**不得**为炫技而堆动画。详见本仓库 `remo-agent-video-plan` Skill 中的 *Core principles (motion & narrative)*。
+| Field | Required | Notes |
+|-------|----------|--------|
+| `title` | no | 可选 |
+| `nodes` | yes | 每项：`id`, `x`, `y` (0–1 中心在图区内), 可选 `imageUrl` 或 `iconId`（`semanticIcons` 中的 id，无图时大图标）, 可选 `shortLabel` |
+| `edges` | yes (可为 `[]`) | `from` / `to` 为 `node.id`；可选 `label` 显示在边中点附近 |
+| `revealStaggerFrames` | no | 节点依次入场间隔，默认 12 |
+| `outroFadeFrames` | no | 同其他 kind |
+
+**用途**：有具体指称（论文、系所、指标等）时**优先**用本 kind，以「物」和「线」表意，**不是**把解说词铺满屏。
+
+### `kind: "typewriterText"`（科普向：抽象叙述）
+
+| Field | Required | Notes |
+|-------|----------|--------|
+| `title` | no | 可选；影响默认 `textStartFrame` 留白 |
+| `text` | yes | **单段**；按 `reveal` 显字 |
+| `reveal` | yes | `word`（以空格分词，适合英混）\| `char`（**中文密排优先**） |
+| `framesPerStep` | no | 每步间隔帧，默认 `word`≈5、`char`≈2 @30fps |
+| `textStartFrame` | no | 正文从第几帧起打，默认有标题 18 否则 0 |
+| `outroFadeFrames` | no | 同左 |
+
+**用途**：概念抽象、只好多字时，**打字机/逐字**，避免大段动效行墙（组会感）。
+
+### `kind: "kineticText"`（多行动效字）
+
+**原则**：动效、叙事弧、高亮词须**由文案与分镜在故事里的作用**反推，**不得**为炫技而堆动画。在 **Delivery style** 为演讲/组会/高信息跟读时，`kineticText` 常是**合适的主选**；若为**科普向**且未指定他种风格，默认定式见 `remo-agent-video-plan` 的 **Delivery style**（Heuristic）。详见 *Core principles (motion & narrative)*。
 
 | Field | Required | Notes |
 |-------|----------|--------|

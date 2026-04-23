@@ -4,6 +4,8 @@ import { CodeSlideView } from "./components/CodeSlideView";
 import { CoverSlideView } from "./components/CoverSlideView";
 import { MediaSlideView } from "./components/MediaSlideView";
 import { KineticTextSlideView } from "./components/KineticTextSlideView";
+import { ExplainerGraphSlideView } from "./components/ExplainerGraphSlideView";
+import { TypewriterTextSlideView } from "./components/TypewriterTextSlideView";
 import type { PlanSlide, SlideKind } from "./types/videoPlan";
 
 function assertNever(x: never): never {
@@ -41,9 +43,21 @@ export const SLIDE_CATALOG: ReadonlyArray<{
   },
   {
     kind: "kineticText",
-    label: "Kinetic / explainer text",
+    label: "Kinetic / explainer text (legacy lines)",
     description:
-      "Text as motion: stagger, word-by-word, collide, drift; for 科普/解说 rather than static PPT",
+      "Line-by-line motion; prefer explainerGraph + typewriterText for 科普。组会/演讲式信息墙可用此项。",
+  },
+  {
+    kind: "explainerGraph",
+    label: "Explainer graph",
+    description:
+      "Icons or images as nodes, edges as relations—visual-first, content-driven, not a script wall",
+  },
+  {
+    kind: "typewriterText",
+    label: "Typewriter (abstract copy)",
+    description:
+      "One block revealed by char or by word: for abstract points where graphics do not help",
   },
 ] as const;
 
@@ -63,6 +77,10 @@ export function renderSlideContent(slide: PlanSlide): React.ReactNode {
       return <CodeSlideView slide={slide} />;
     case "kineticText":
       return <KineticTextSlideView slide={slide} />;
+    case "explainerGraph":
+      return <ExplainerGraphSlideView slide={slide} />;
+    case "typewriterText":
+      return <TypewriterTextSlideView slide={slide} />;
     default:
       return assertNever(slide);
   }

@@ -5,10 +5,10 @@ description: >-
   project—slide kinds, on-screen copy, ttsText, fps/dimensions, and props files. Triggers: video plan
   JSON, sample-video-plan, props for VideoFromPlan, "slides" schema, ttsText per scene, on-screen
   headline/bullets/code/image, projects/slug plan.json and meta.json (Chinese 标题/简介 for CN
-  publishing). Motion and kinetic fields must follow **text-first** narrative intent (see Core principles
-  in body). Does not cover new Remotion components or new kind values; use remo-agent-slide-components
-  for that.
-version: 0.2.3
+  publishing). **Multiple delivery styles** are first-class (see **Delivery style**). Motion follows
+  narrative meaning (see Core principles). Does not cover new Remotion components or new kind values;
+  use remo-agent-slide-components for that.
+version: 0.2.5
 metadata:
   project: remo-agent
 ---
@@ -41,7 +41,7 @@ Apply this skill when the task involves any of:
 
 - Authoring or editing a props file passed to `VideoFromPlan` (`--props=...`), including `projects/<slug>/plan.json` in the [project directory layout](references/project-layout.md).
 - Authoring or validating `meta.json` (`title` / `description` / `slug`) alongside a project folder.
-- Explaining which slide `kind` fits a story beat (cover vs bullets vs media vs code).
+- Explaining which slide `kind` fits a **story beat and delivery style** (all registered kinds in [slide-kinds](references/slide-kinds.md); see **Delivery style** below).
 - Validating JSON against the schema before render or in CI.
 - Filling `ttsText` for off-render TTS (field meaning only; provider workflow is `remo-agent-narration-tts`).
 
@@ -71,11 +71,34 @@ This repo treats **on-screen text and story beats** as the source of truth. Moti
 
 Authoring and reviewing agents should hold each other to this: **understand the text, then choose the motion.**
 
+## Delivery style (体裁 / 要求：多风格、须先对齐)
+
+**The data model supports every built-in `kind`—there is no single “correct” look for all videos.** The skill’s job is to **align** the `plan` with the user’s **delivery style** (风格 / 使用场景), not to force one template.
+
+- **If the user states a style** (e.g. 科普、组会/演讲、产品片、技术教程、纯媒体、混剪)—**follow that**. Do not override with a different genre.
+- **If the style is unclear**—**ask** (or infer from `meta.json` / brief / product context), then **confirm** before heavy authoring. A short note in the PR or `meta.json` `description` can record “delivery: 科普 / 组会 / …” for reviewers.
+
+**Common patterns (examples, not exhaustive):**
+
+| Intent | Typical `kind` mix | Notes |
+|--------|--------------------|--------|
+| **Pop-sci / 科普 / 概念解释 (visual-first)** | `cover`, `explainerGraph` (`imageUrl` 或 `iconId` + edges), `typewriterText`, sometimes `media` | 要「看见物 + 关系」时优先图与线；抽象段打字机。 |
+| **Lecture / 组会 / 演讲体 / 高信息** | `kineticText` (`contentArc` / `lineAnimation`), `bullets`, `code`, `media` | 多行跟读、动效行、条目共存；**合法的一等风格**。 |
+| **Product / 发布 / 极简** | `cover`, `media`, short `bullets` | 大图 + 少字 |
+| **Tutorial / 技术** | `code`, `bullets`, `media` | 步骤、可复制 |
+| **Hybrid** | 同一 `plan` 内**混用**不同 `kind` 按分镜切 | 例如一段科普 + 一段 Q&A 组会体 |
+
+### Heuristic: 科普/解释 (when the user **did not** specify another style)
+
+For **explanation / education** pieces where no other genre was specified, a **sensible default** (not a hard rule) is: **concrete** beats → `explainerGraph` (add **`imageUrl`** when assets exist); **abstract** beats → `typewriterText`; avoid treating **`kineticText` as the main workhorse** for that look—unless the user then asks for “组会/多行动效” instead.
+
+**Summary for that sub-case**: 能上图就图 + 线表关系；抽象再打字机；`kineticText` 作主角更适合演讲/组会体。
+
 ## Workflow
 
-1. **Gather intent** — topic, target length (slide count or total duration in frames if fixed), language for on-screen text, whether `ttsText` is needed, **publishing title/description** (goes in `meta.json` when using a project directory).
+1. **Gather intent** — topic, **delivery style** (or confirm one—see **Delivery style**), target length, language, `ttsText`?, `meta` title/description, and **assets** (e.g. `imageUrl` list) if the style needs them.
 2. **Choose file layout** — for a full deliverable, create `projects/<slug>/` with `meta.json` + `plan.json` per [references/project-layout.md](references/project-layout.md). For a quick one-off, a standalone `plan.json` path is still valid.
-3. **Map beats to `kind`s** — use [references/slide-kinds.md](references/slide-kinds.md) for required and optional fields per kind.
+3. **Map beats to `kind`s** — match the **agreed** delivery style; use [references/slide-kinds.md](references/slide-kinds.md) for fields per `kind`.
 4. **Assemble `VideoPlanProps`** in `plan.json` — set `fps` / `width` / `height` if not default; ensure every slide has `durationInFrames` ≥ 1; optional `narrationAudioUrl` only after audio exists (see `remo-agent-narration-tts`).
 5. **Validate** — JSON parses; all `kind` values are in the `PlanSlide` union; if `meta.json` is used, `slug` matches the directory name.
 6. **Hand off** — render: `remo-agent-remotion-render`; new layouts: `remo-agent-slide-components`.
@@ -89,6 +112,8 @@ Before sharing or committing a plan file:
 - [ ] Remote `imageUrl` values are reachable HTTPS URLs the render environment can fetch, or the user accepts render-time failure.
 - [ ] Sum of `durationInFrames` matches the intended run time (optional sanity: total frames / fps ≈ seconds).
 - [ ] If using `projects/<slug>/`, `meta.json` includes `title`, `description`, and `slug === "<slug>"` — and **title/description** use the **intended display language** (e.g. 中文标题与简介 for Chinese deliverables), not empty English placeholders.
+- [ ] **Delivery style** is **explicit, inferred with user confirmation, or** (only for 科普/解释) applied using the **heuristic** in **Delivery style**—and the chosen `kind`s **match that style**, not a different genre by accident.
+- [ ] If the style is **科普/解释 (heuristic)**: where a beat is **naturally a graph of things + relations**, prefer **`explainerGraph`**; **abstract** beats → **`typewriterText`**; do not default the whole run to **`kineticText`** unless the user wanted **lecture/组会** motion.
 - [ ] For `kind: "kineticText"`, `contentArc` (or, if used alone, `lineAnimation`) and `highlights` **match the narrative job** of that beat—**not** decoration for its own sake (see **Core principles** above).
 
 ## Failure modes

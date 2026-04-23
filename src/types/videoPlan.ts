@@ -39,6 +39,7 @@ export type CodeSlide = SlideBase & {
 };
 
 import type { KineticContentArc } from "../lib/kineticArc";
+import type { SemanticIconName } from "../lib/semanticIcons";
 
 export type KineticTextLineAnim =
   | "staggerBounce"
@@ -69,12 +70,62 @@ export type KineticTextSlide = SlideBase & {
   outroFadeFrames?: number;
 };
 
+/**
+ * 图优先科普：能画出来的概念用图节点，关系用边；x/y 为图区内归一化中心 (0–1)。
+ */
+export type ExplainerGraphNode = {
+  id: string;
+  x: number;
+  y: number;
+  imageUrl?: string;
+  /** 无网络图时以大图标呈现该概念；与 imageUrl 二选一即可 */
+  iconId?: SemanticIconName;
+  /** 极短标签，可选；以图为主时尽量省略 */
+  shortLabel?: string;
+};
+
+export type ExplainerGraphEdge = {
+  from: string;
+  to: string;
+  label?: string;
+};
+
+export type ExplainerGraphSlide = SlideBase & {
+  kind: "explainerGraph";
+  title?: string;
+  nodes: ExplainerGraphNode[];
+  edges: ExplainerGraphEdge[];
+  /** 节点依次出现的间隔帧，默认 12 */
+  revealStaggerFrames?: number;
+  outroFadeFrames?: number;
+};
+
+export type TypewriterReveal = "word" | "char";
+
+/**
+ * 抽象内容：单行/单段文案，按词或按字显字；避免大段动效字墙。
+ * 中文密集叙述优先 `char`；有空格分词时可用 `word`。
+ */
+export type TypewriterTextSlide = SlideBase & {
+  kind: "typewriterText";
+  title?: string;
+  text: string;
+  reveal: TypewriterReveal;
+  /** 每显式一词或一字的间隔帧；默认 5（word）/ 2（char）@30fps 量级 */
+  framesPerStep?: number;
+  /** 正文从第几帧开始（给标题让路），默认 18 */
+  textStartFrame?: number;
+  outroFadeFrames?: number;
+};
+
 export type PlanSlide =
   | CoverSlide
   | BulletsSlide
   | MediaSlide
   | CodeSlide
-  | KineticTextSlide;
+  | KineticTextSlide
+  | ExplainerGraphSlide
+  | TypewriterTextSlide;
 
 /** Discriminator union tag for registered slide renderers. */
 export type SlideKind = PlanSlide["kind"];
