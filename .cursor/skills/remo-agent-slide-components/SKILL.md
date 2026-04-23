@@ -3,8 +3,9 @@ name: remo-agent-slide-components
 description: >-
   **RADICAL / NOT CONSERVATIVE.** *SlideView code owns scale & motion. Default: HERO SIZES, strong
   springs, continuous idle motion, camera move on media, scan/glow on code. "Looks like PPT" = BUG
-  in this layer until proven user asked 极简. v0.4.0
-version: 0.4.0
+  in this layer until proven user asked 极简. Reuse only when **semantics** match; new primitive/slide
+  when meaning diverges. v0.4.1
+version: 0.4.1
 metadata:
   project: remo-agent
 ---
@@ -39,6 +40,14 @@ If the user’s video still feels like PowerPoint, **the code is where you fix i
 - **Meaning, not timidity:** Animate in ways that **teach** (contrast, order, focus). **Timid** animation is a **separate** failure from **nonsensical** animation.
 - **Types are contract:** new visible behavior → `videoPlan.ts` + view + [slide-kinds.md](../remo-agent-video-plan/references/slide-kinds.md).
 - **Pair with** `remo-agent-video-plan` **RADICAL** bias: no empty arcs on the data side, no single-fade morgue on the code side.
+- **Semantics before reuse:** Reuse a component or primitive only when the **user-visible relationship** (directed edge vs undirected link, one-way flow vs peer relation, etc.) is the **same**. If the next shot needs a different meaning, add a **new** small component or primitive—**do not** stretch an existing one with `mode` flags, double-stroke tricks, or props that mean “we needed something else but shoehorned it here.”
+
+## Component reuse: semantics, not “one shell for everything”
+
+- **Reusable** here means: **stable, honest abstractions** (e.g. a directed edge primitive with real arrow semantics in SVG), composed as needed. Different videos will still need **different** slides and sometimes **new** building blocks.
+- **Reuse** when: behavior and **meaning** line up (same kind of edge, same layout role, same motion contract).
+- **New component** when: the **meaning** changes—even if the old one “almost” fits. Examples: undirected relationship vs A→B flow; need for bezier vs straight; label placement rules that are not a thin variant.
+- **Forbidden pattern:** Faking a concept (e.g. directed influence) by **misusing** another (e.g. two full-length lines and color) because the true primitive is missing—**add** the true primitive and use it, then delete the fake.
 
 ## Pipeline
 
@@ -49,6 +58,7 @@ If the user’s video still feels like PowerPoint, **the code is where you fix i
 - New/renamed `kind`.
 - **Any** report of: tiny icons, no motion, one fade, PPT, “boring” — **this skill**, not “user should prompt harder.”
 - Refactors to **raise** the energy floor of defaults.
+- Deciding **reuse vs new** piece of UI: relationship/meaning changed but someone tried to **reuse** a similar-looking component (props explosion, faked visuals) — apply **Component reuse: semantics** above.
 
 ## Prerequisites
 
@@ -78,6 +88,7 @@ If the user’s video still feels like PowerPoint, **the code is where you fix i
 - [ ] PPT symptom → open `*SlideView` and **increase** energy before touching user copy.
 - [ ] `SLIDE_CATALOG` + `assertNever` complete.
 - [ ] No secrets; no TTS in views.
+- [ ] Primitives **match** what they **denote** (arrows for directed flow, not double-line hacks; new `kind` or new sub-component when meaning diverges).
 
 ## Failure → fix
 
@@ -86,11 +97,13 @@ If the user’s video still feels like PowerPoint, **the code is where you fix i
 | Tiny icons | Scale SVG path + layout; add props if needed |
 | Static after intro | **Add** loops / pulse / parallax / scan |
 | `assertNever` | Wire `case` + view |
+| Wrong **meaning** in one component (e.g. need arrow semantics but reusing a line pair) | **New** named primitive or slide piece; do not pile `mode` / color tricks to fake the missing concept |
 
 ## BANNED (implementation)
 
 - Registering a `kind` with **one** `useSlideEntrance` and nothing else in the main layout (unless the **kind** is **explicitly** static-by-design in product).
 - Suggesting the user “write a stronger plan” when the component caps icon size or kills motion.
+- Forcing a **new** semantic into an **old** component shell to “maximize reuse” (visual or API hacks) instead of adding a small correct abstraction.
 
 ## Do not
 

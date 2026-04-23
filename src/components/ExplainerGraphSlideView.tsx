@@ -2,7 +2,10 @@ import React, { useMemo } from "react";
 import { Img, interpolate, spring, useCurrentFrame, useVideoConfig } from "remotion";
 import { SemanticIconById, type SemanticIconName } from "../lib/semanticIcons";
 import type { ExplainerGraphSlide } from "../types/videoPlan";
+import { DiagramArrowheadMarker, DirectedArrowEdgeSvg } from "./diagram/DirectedArrowEdgeSvg";
 import { slideChrome, SlideChrome } from "./SlideChrome";
+
+const EXPLAINER_GRAPH_ARROW_MARKER = "remoExplainerGraphArrow";
 
 /** Fills frame — graph is the hero, not a PPT inset */
 const GRAPH_MIN_H = 680;
@@ -119,6 +122,9 @@ export const ExplainerGraphSlideView: React.FC<{
             }}
             aria-hidden
           >
+            <defs>
+              <DiagramArrowheadMarker id={EXPLAINER_GRAPH_ARROW_MARKER} fill={slideChrome.accent} />
+            </defs>
             {edges.map((e, ei) => {
               const ia = nodes.findIndex((n) => n.id === e.from);
               const ib = nodes.findIndex((n) => n.id === e.to);
@@ -132,39 +138,24 @@ export const ExplainerGraphSlideView: React.FC<{
               }
               const startF = edgeStartFrame(e);
               const t = frame - startF;
-              const len = Math.hypot(p1.x - p0.x, p1.y - p0.y);
               const vis = t < 0 ? 0 : spring({ frame: t, fps, config: { damping: 18, stiffness: 140 }, from: 0, to: 1 });
-              const draw = vis * len;
               const pulse = 0.5 + 0.45 * vis;
               return (
-                <g key={`${e.from}-${e.to}-${ei}`}>
-                  <line
-                    x1={p0.x}
-                    y1={p0.y}
-                    x2={p1.x}
-                    y2={p1.y}
-                    stroke={slideChrome.border}
-                    strokeWidth="14"
-                    strokeLinecap="round"
-                    pathLength={len}
-                    strokeDasharray={`${len}`}
-                    strokeDashoffset={len - draw}
-                    opacity={0.35 + 0.5 * pulse}
-                  />
-                  <line
-                    x1={p0.x}
-                    y1={p0.y}
-                    x2={p1.x}
-                    y2={p1.y}
-                    stroke={slideChrome.accent}
-                    strokeWidth="4"
-                    strokeLinecap="round"
-                    pathLength={len}
-                    strokeDasharray={`${len}`}
-                    strokeDashoffset={len - draw}
-                    opacity={0.4 + 0.55 * pulse}
-                  />
-                </g>
+                <DirectedArrowEdgeSvg
+                  key={`${e.from}-${e.to}-${ei}`}
+                  fromX={p0.x}
+                  fromY={p0.y}
+                  toX={p1.x}
+                  toY={p1.y}
+                  drawProgress={vis}
+                  trackColor={slideChrome.border}
+                  trackWidth={14}
+                  accentColor={slideChrome.accent}
+                  accentWidth={4}
+                  accentMarkerId={EXPLAINER_GRAPH_ARROW_MARKER}
+                  trackOpacity={0.35 + 0.5 * pulse}
+                  accentOpacity={0.4 + 0.55 * pulse}
+                />
               );
             })}
           </svg>
