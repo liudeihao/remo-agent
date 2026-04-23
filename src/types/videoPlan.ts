@@ -2,6 +2,10 @@ export type SlideBase = {
   durationInFrames: number;
   /** Optional TTS or pre-rendered narration for this segment */
   ttsText?: string;
+  /**
+   * Fixed bottom 字幕/旁白上屏（全 kind 可用）。与 `kind: "cover"` 的 `subtitle`（封面副标题）不同。
+   */
+  videoSubtitle?: string;
 };
 
 export type CoverSlide = SlideBase & {

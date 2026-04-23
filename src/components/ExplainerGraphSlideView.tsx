@@ -69,7 +69,7 @@ export const ExplainerGraphSlideView: React.FC<{
   const titleOp = interpolate(frame, [0, 14], [0, 1], { extrapolateRight: "clamp" });
 
   return (
-    <SlideChrome>
+    <SlideChrome videoSubtitle={slide.videoSubtitle}>
       <div
         style={{
           height: "100%",
@@ -135,10 +135,7 @@ export const ExplainerGraphSlideView: React.FC<{
               const len = Math.hypot(p1.x - p0.x, p1.y - p0.y);
               const vis = t < 0 ? 0 : spring({ frame: t, fps, config: { damping: 18, stiffness: 140 }, from: 0, to: 1 });
               const draw = vis * len;
-              const pulse =
-                t > 12 && vis > 0.92
-                  ? 0.55 + 0.45 * (0.5 + 0.5 * Math.sin(frame * 0.18 + ei * 1.2))
-                  : 0.5 + 0.45 * vis;
+              const pulse = 0.5 + 0.45 * vis;
               return (
                 <g key={`${e.from}-${e.to}-${ei}`}>
                   <line
@@ -194,9 +191,7 @@ export const ExplainerGraphSlideView: React.FC<{
                   to: 1,
                 });
             const visId = nodeVisualId(n);
-            const float = t > 0 && o > 0.88 ? Math.sin((frame + i * 24) * 0.11) * 7 : 0;
-            const breathe = t > 0 && o > 0.9 ? 1 + 0.04 * Math.sin((frame + i * 18) * 0.14) : 1;
-            const wobble = t > 0 && o > 0.9 ? Math.sin((frame + i * 9) * 0.08) * 0.4 : 0;
+            const wobble = 0;
             return (
               <div
                 key={n.id}
@@ -204,7 +199,7 @@ export const ExplainerGraphSlideView: React.FC<{
                   position: "absolute",
                   left: `${n.x * 100}%`,
                   top: `${n.y * 100}%`,
-                  transform: `translate(-50%, calc(-50% + ${float}px)) scale(${enterScale * breathe}) rotate(${wobble}deg)`,
+                  transform: `translate(-50%, -50%) scale(${enterScale}) rotate(${wobble}deg)`,
                   opacity: t < 0 ? 0 : o,
                   width: NODE_CARD_W,
                   minHeight: NODE_CARD_W * 0.95,
@@ -277,7 +272,6 @@ export const ExplainerGraphSlideView: React.FC<{
             const o = t < 0 ? 0 : interpolate(t, [0, 10], [0, 1], { extrapolateRight: "clamp" });
             const mx = ((p0.x + p1.x) / 2 / 1000) * 100;
             const my = ((p0.y + p1.y) / 2 / 1000) * 100;
-            const labelBob = t > 5 ? Math.sin((frame + ei * 5) * 0.1) * 3 : 0;
             return o > 0.02 ? (
               <div
                 key={`lbl-${e.from}-${e.to}-${ei}`}
@@ -285,7 +279,7 @@ export const ExplainerGraphSlideView: React.FC<{
                   position: "absolute",
                   left: `${mx}%`,
                   top: `${my}%`,
-                  transform: `translate(-50%, calc(-50% + ${labelBob}px)) scale(${0.7 + 0.3 * pop})`,
+                  transform: `translate(-50%, -50%) scale(${0.7 + 0.3 * pop})`,
                   fontSize: 21,
                   fontWeight: 600,
                   color: slideChrome.accent,

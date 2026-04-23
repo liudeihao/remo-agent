@@ -9,14 +9,16 @@
       "title": "axios 投毒与好莱坞式骗术",
       "subtitle": "发布令牌 → 恶意版本 → 木马；感染面与处置，一次看清",
       "periodLabel": "科普",
-      "brandFooter": "remo-agent · 动效分镜"
+      "brandFooter": "remo-agent · 动效分镜",
+      "videoSubtitle": "一条线看清：投毒、感染面、密钥处置与社会工程。"
     },
     {
       "kind": "media",
       "durationInFrames": 220,
       "headline": "上周：著名库 axios 被投毒",
       "imageUrl": "https://images.unsplash.com/photo-1550751827-4bd374c3f58b?auto=format&w=1920&q=80",
-      "caption": "黑客拿到发布令牌，直接推送带木马的新版本——供应链里「信任上游」的一环被攻破。"
+      "caption": "黑客拿到发布令牌，直接推送带木马的新版本——供应链里「信任上游」的一环被攻破。",
+      "videoSubtitle": "黑客拿到发布令牌，直接发了一个含木马的新版本。"
     },
     {
       "kind": "explainerGraph",
@@ -34,7 +36,8 @@
         { "from": "c", "to": "d", "label": "用户/CI 拉取" }
       ],
       "revealStaggerFrames": 10,
-      "outroFadeFrames": 12
+      "outroFadeFrames": 12,
+      "videoSubtitle": "从窃凭据、冒名发版，到构建与机器拉取恶意产物。"
     },
     {
       "kind": "code",
@@ -42,14 +45,16 @@
       "headline": "演示：axios 如何进你项目",
       "language": "text",
       "code": "{\n  \"dependencies\": {\n    \"axios\": \"^1.x.x\"\n  }\n}",
-      "highlights": ["axios"]
+      "highlights": ["axios"],
+      "videoSubtitle": "日常依赖里的 axios，会把上游「打好的包」带进你的仓库与流水线。"
     },
     {
       "kind": "media",
       "durationInFrames": 220,
       "headline": "感染面：每周约 1 亿次下载",
       "imageUrl": "https://images.unsplash.com/photo-1451187580459-43490279c0fa?auto=format&w=1920&q=80",
-      "caption": "使用面极广的 JS 库——一次污染，无数构建与机器可能同步「喝到」恶意版本。"
+      "caption": "使用面极广的 JS 库——一次污染，无数构建与机器可能同步「喝到」恶意版本。",
+      "videoSubtitle": "使用面极广，每周下载量接近一亿次，这一次感染面非常大。"
     },
     {
       "kind": "explainerGraph",
@@ -67,7 +72,8 @@
         { "from": "c", "to": "d", "label": "官方清除说明：能旋转的凭证建议全作废" }
       ],
       "revealStaggerFrames": 9,
-      "outroFadeFrames": 12
+      "outroFadeFrames": 12,
+      "videoSubtitle": "木马会扫目录、偷密钥再外传；官方常要求把本机与流水线上的秘钥、令牌一律作废。"
     },
     {
       "kind": "code",
@@ -75,14 +81,16 @@
       "headline": "官方口径：为什么常说「要作废所有密钥」",
       "language": "text",
       "code": "NPM_TOKEN=***\nSSH_PRIVATE_KEY=***\nAPI_KEY=***\n# 感染环境下：旋转、重签、全量重发",
-      "highlights": ["NPM_TOKEN", "作废", "全量重发"]
+      "highlights": ["NPM_TOKEN", "作废", "全量重发"],
+      "videoSubtitle": "不是小题大做：不旋转，泄漏的凭证会继续被滥用。"
     },
     {
       "kind": "media",
       "durationInFrames": 200,
       "headline": "「好莱坞式」= 人演出来的攻防戏",
       "imageUrl": "https://images.unsplash.com/photo-1521737604893-d14cc237f11d?auto=format&w=1920&q=80",
-      "caption": "超流行包理论上「每行都审、环节有控」——这次却是精心策划的社会工程，把真防护绕开或击穿。"
+      "caption": "超流行包理论上「每行都审、环节有控」——这次却是精心策划的社会工程，把真防护绕开或击穿。",
+      "videoSubtitle": "明星库理论上每行都审、环节有控；这次却是社会工程，把防护演穿。"
     },
     {
       "kind": "explainerGraph",
@@ -101,7 +109,8 @@
         { "from": "c", "to": "d", "label": "社会工程攻破" }
       ],
       "revealStaggerFrames": 9,
-      "outroFadeFrames": 16
+      "outroFadeFrames": 16,
+      "videoSubtitle": "最难防的往往是人、身份与发布权：社会工程对准了它。"
     },
     {
       "kind": "explainerGraph",
@@ -117,7 +126,8 @@
         { "from": "b", "to": "c" }
       ],
       "revealStaggerFrames": 10,
-      "outroFadeFrames": 24
+      "outroFadeFrames": 24,
+      "videoSubtitle": "信任明星库的同时，也要敬畏：谁能在上游点一次「发布」。"
     }
   ]
 }

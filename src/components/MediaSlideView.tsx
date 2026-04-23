@@ -7,11 +7,12 @@ import type { MediaSlide } from "../types/videoPlan";
 export const MediaSlideView: React.FC<{ slide: MediaSlide }> = ({ slide }) => {
   const { opacity, translateY } = useSlideEntrance();
   const frame = useCurrentFrame();
-  const breathe = 1.04 + 0.06 * (0.5 + 0.5 * Math.sin(frame * 0.035));
-  const panX = interpolate(frame, [0, 180], [0, -1.2], { extrapolateRight: "extend" });
-  const panY = interpolate(frame, [0, 180], [0, 0.6], { extrapolateRight: "extend" });
+  const slow = Math.sin(frame * 0.012);
+  const breathe = 1 + 0.012 * slow;
+  const panX = interpolate(frame, [0, 200], [0, -0.4], { extrapolateRight: "clamp" });
+  const panY = interpolate(frame, [0, 200], [0, 0.2], { extrapolateRight: "clamp" });
   return (
-    <SlideChrome>
+    <SlideChrome videoSubtitle={slide.videoSubtitle}>
       <div
         style={{
           height: "100%",

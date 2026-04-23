@@ -6,7 +6,7 @@ import type { CoverSlide } from "../types/videoPlan";
 export const CoverSlideView: React.FC<{ slide: CoverSlide }> = ({ slide }) => {
   const { opacity, translateY } = useSlideEntrance();
   return (
-    <SlideChrome>
+    <SlideChrome videoSubtitle={slide.videoSubtitle}>
       <div
         style={{
           height: "100%",

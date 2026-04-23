@@ -16,7 +16,7 @@ export const BulletsSlideView: React.FC<{ slide: BulletsSlide }> = ({
 }) => {
   const { opacity, translateY } = useSlideEntrance();
   return (
-    <SlideChrome>
+    <SlideChrome videoSubtitle={slide.videoSubtitle}>
       <div
         style={{
           height: "100%",

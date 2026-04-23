@@ -590,7 +590,7 @@ export const KineticTextSlideView: React.FC<{ slide: KineticTextSlide }> = ({
       : null;
 
   return (
-    <SlideChrome>
+    <SlideChrome videoSubtitle={slide.videoSubtitle}>
       <div
         style={{
           height: "100%",

@@ -13,10 +13,9 @@ export const CodeSlideView: React.FC<{
   const y = spring({ frame, fps, config: { damping: 16, mass: 0.45, stiffness: 100 }, from: 26, to: 0 });
 
   const highlights = slide.highlights;
-  const sweep = (frame * 0.45) % 100;
-  const borderGlow = 0.25 + 0.15 * (0.5 + 0.5 * Math.sin(frame * 0.12));
+  const borderGlow = 0.32;
   return (
-    <SlideChrome>
+    <SlideChrome videoSubtitle={slide.videoSubtitle}>
       <div
         style={{
           height: "100%",
@@ -75,19 +74,6 @@ export const CodeSlideView: React.FC<{
           >
             <code>{highlightPatternsInCode(slide.code, highlights)}</code>
           </pre>
-          <div
-            aria-hidden
-            style={{
-              position: "absolute",
-              left: 0,
-              right: 0,
-              top: `${sweep}%`,
-              height: 48,
-              pointerEvents: "none",
-              background: `linear-gradient(180deg, rgba(53,184,255,0.32) 0%, transparent 100%)`,
-              mixBlendMode: "screen" as const,
-            }}
-          />
         </div>
       </div>
     </SlideChrome>

@@ -68,7 +68,7 @@ export const TypewriterTextSlideView: React.FC<{
     : 0;
 
   return (
-    <SlideChrome>
+    <SlideChrome videoSubtitle={slide.videoSubtitle}>
       <div
         style={{
           height: "100%",

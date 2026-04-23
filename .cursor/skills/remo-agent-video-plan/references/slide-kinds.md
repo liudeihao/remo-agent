@@ -11,6 +11,7 @@
 | `kind` | string (discriminant) | yes | `cover` \| `bullets` \| `media` \| `code` \| `kineticText` \| `explainerGraph` \| `typewriterText` |
 | `durationInFrames` | number | yes | Integer ≥ 1. Total duration = sum over `slides` |
 | `ttsText` | string | no | Spoken script for external TTS; not rendered on screen |
+| `videoSubtitle` | string | no | **底部固定字幕**（上屏）；与 `kind: "cover"` 的 `subtitle`（封面副标题）不同 |
 
 ## Top-level `VideoPlanProps`
 
