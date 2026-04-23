@@ -1,67 +1,85 @@
 ---
 name: remo-agent-slide-components
-description: Adds or changes Remotion slide UI in remo-agent—new PlanSlide kinds, *SlideView components, and slideRegistry entries. Use when editing src/components/*SlideView.tsx, src/slideRegistry.tsx, or src/types/videoPlan.ts for visual layouts; or when the user asks for a new slide type, kind, or reusable Remotion view.
+description: >-
+  Extends or maintains Remotion slide UI in remo-agent: new PlanSlide kinds, *SlideView components,
+  SLIDE_CATALOG, and renderSlideContent in slideRegistry. Triggers: new slide type, new kind, edit
+  CoverSlideView, slideRegistry, videoPlan types, "add a layout", reusable Remotion slide. Does not
+  author JSON plans (remo-agent-video-plan) or run CLI render (remo-agent-remotion-render).
+version: 0.2.0
+metadata:
+  project: remo-agent
 ---
 
-# Slide components and registry (remo-agent)
+# remo-agent — Slide components & registry (presentation layer)
 
-## How this skill fits the pipeline
+## Scope
 
-| Stage | Skill | Responsibility |
-| --- | --- | --- |
-| On-screen text / structure as data | `remo-agent-video-plan` | `VideoPlanProps` JSON, valid `kind`s, copy and `ttsText` |
-| **Reusable Remotion UI for each `kind`** | **this skill** | Types, `*SlideView` components, `SLIDE_CATALOG`, `renderSlideContent` |
-| Timeline → MP4 | `remo-agent-remotion-render` | Studio, `remotion render`, props file |
-| Spoken audio (optional) | `remo-agent-narration-tts` | `narrationAudioUrl`, external TTS workflow |
+- **In scope**: TypeScript/React that renders each `PlanSlide` variant, the registry that maps `kind` → component, and `SLIDE_CATALOG` metadata for discoverability. Shared chrome (`SlideChrome`, `src/lib/*`) and entrance motion used by multiple views.
+- **Out of scope**: contents of `VideoPlanProps` JSON files, `remotion render` invocation, and TTS providers.
 
-`VideoFromPlan` **does not** list components per slide. It only calls `renderSlideContent` from `src/slideRegistry.tsx`. New visuals **must** go through the registry so JSON-driven videos stay the single path.
+## Position in the pipeline
+
+`VideoFromPlan` does **not** import concrete `*SlideView` by `kind` inline. It calls `renderSlideContent` in `src/slideRegistry.tsx` only. Any new on-screen mode must be registered there—no parallel switch in the composition.
 
 ## When to use
 
-- Adding a new `kind` (new discriminant on `PlanSlide`).
-- Creating or editing a slide view under `src/components/`.
-- Registering a component in `src/slideRegistry.tsx`.
-- Refactoring shared chrome (e.g. `SlideChrome`, `src/lib/*`).
+- Adding or renaming a **discriminant** on `PlanSlide` (`kind`).
+- Creating `src/components/<Name>SlideView.tsx` or changing styling/layout of an existing view.
+- Updating `SLIDE_CATALOG` or the switch in `renderSlideContent`.
+- Refactoring shared layout tokens (`slideChrome`, fade helpers, highlight utilities).
 
-## Extension checklist (do in order)
+## Prerequisites
 
-1. **`src/types/videoPlan.ts`**
-   - Add a new `XxxSlide` type with a **string literal** `kind: "yourKind"`.
-   - Add it to the `PlanSlide` union. `SlideKind` will update automatically.
+- Node.js and dependencies installed at repo root (`npm install`).
+- `npx tsc --noEmit` must pass before the change is considered complete.
 
-2. **`src/components/YourKindSlideView.tsx`**
-   - Export a `React.FC<{ slide: XxxSlide }>` (or equivalent).
-   - Reuse `SlideChrome`, `useSlideEntrance` / `src/lib` patterns; match existing slide files for style.
+## Source of truth
 
-3. **`src/components/index.ts`**
-   - Export the new view so discoverability and imports stay consistent.
+| Asset | Path |
+|-------|--------|
+| Discriminated union and slide shapes | `src/types/videoPlan.ts` |
+| Registry, catalog, `renderSlideContent` | `src/slideRegistry.tsx` |
+| Barrel exports for views | `src/components/index.ts` |
+| Composition (no per-kind branches) | `src/compositions/VideoFromPlan.tsx` |
+| Extension checklist (detailed) | [references/extension.md](references/extension.md) |
 
-4. **`src/slideRegistry.tsx`**
-   - Append one object to `SLIDE_CATALOG` (`kind`, `label`, `description`).
-   - Add a `case "yourKind":` in `renderSlideContent` that returns `<YourKindSlideView slide={slide} />`.
-   - The `default` branch uses `assertNever` — if the switch is incomplete, TypeScript will fail.
+## Workflow
 
-5. **Validate**
-   - Run `npx tsc --noEmit`. Fix errors before claiming done.
+1. **Types** — Add or adjust `XxxSlide` in `src/types/videoPlan.ts`; extend `PlanSlide` union. See [references/extension.md](references/extension.md) §1.
+2. **View** — Implement `React.FC<{ slide: XxxSlide }>`; reuse `SlideChrome` and patterns from existing `*SlideView.tsx` files.
+3. **Export** — Add the component to `src/components/index.ts`.
+4. **Register** — Update `SLIDE_CATALOG` and add a `case` in `renderSlideContent` so `assertNever` in the `default` branch remains unreachable for valid slides.
+5. **Verify** — `npx tsc --noEmit`. Optionally `npm run dev` and load a test JSON in Studio.
+6. **Document** — Update `remo-agent-video-plan` [references/slide-kinds.md](../remo-agent-video-plan/references/slide-kinds.md) if fields changed (same PR or follow-up).
 
-6. **JSON / docs**
-   - Update or add sample slides in `data/*.json` if useful.
-   - The `remo-agent-video-plan` skill is updated by humans/agents so new `kind` and fields are documented for script authors.
+## Quality gate
 
-## Conventions
+- [ ] New `kind` appears in: `videoPlan.ts`, new `*SlideView`, `slideRegistry.tsx` (both catalog and switch), and [slide-kinds.md](../remo-agent-video-plan/references/slide-kinds.md) if public contract changed.
+- [ ] No new `if (slide.kind)` chain inside `VideoFromPlan` for production slide types.
+- [ ] Slide components remain **presentational** (no fetches, no secrets, no TTS calls).
 
-- **File name**: `PascalCase` + `SlideView.tsx` (e.g. `MediaSlideView.tsx`).
-- **Props**: `{ slide: XxxSlide }` — keep slide data the only prop when possible.
-- **No** ad-hoc imports of slide views from `src/compositions/VideoFromPlan.tsx` for production slide types. The composition stays generic.
+## Failure modes
+
+| Symptom | Likely cause | Action |
+|---------|----------------|--------|
+| TypeScript error on `assertNever` | Unhandled `kind` in `renderSlideContent` | Add `case` and view |
+| Studio shows old UI | Caching or wrong composition props | Hard refresh; confirm `VideoFromPlan` + latest JSON |
+| JSON validates but runtime error | Mismatch between types and view expectations | Align field types in `videoPlan.ts` with component props |
 
 ## Do not
 
-- Add a new `kind` in JSON or in a component without updating **all** of: `videoPlan.ts`, the new `*SlideView`, and `slideRegistry.tsx`.
-- Register a view in the registry but omit it from `SLIDE_CATALOG` (the catalog is the human/agent index of what exists).
-- Put API keys, network TTS, or non-visual side effects inside slide components; keep views presentational.
-- Create a second parallel routing path (e.g. branching inside `VideoFromPlan` on `kind` with duplicate JSX). Use **only** `renderSlideContent`.
+- Register a view without a `SLIDE_CATALOG` entry (agents rely on the catalog to discover `kind`s).
+- Embed API keys, side-effectful I/O, or TTS in slide views.
+- Branch on `kind` in `VideoFromPlan`—keep routing in `renderSlideContent` only.
 
-## Related files
+## References
 
-- `src/compositions/VideoFromPlan.tsx` — layout of sequences + optional `Audio` only; no per-kind JSX.
-- `src/Root.tsx` — registers `VideoFromPlan` composition; rarely needs changes for a new slide kind.
+| Document | Content |
+|----------|---------|
+| [references/extension.md](references/extension.md) | Ordered checklist and naming conventions |
+
+## Related skills
+
+- `remo-agent-video-plan` — JSON and field reference for authors
+- `remo-agent-remotion-render` — Studio and MP4
+- `remo-agent-narration-tts` — audio (composition already supports `narrationAudioUrl`)

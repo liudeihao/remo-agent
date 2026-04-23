@@ -1,39 +1,75 @@
 ---
 name: remo-agent-narration-tts
-description: Connects text-to-speech and mixed audio to remo-agent video plans. Use when the user asks for voiceover, TTS, narration, WAV/MP3 under narrationAudioUrl, or per-slide ttsText; or when automating an external TTS service before Remotion render.
+description: >-
+  Explains and automates the handoff from per-slide ttsText and mixed narration to remo-agent
+  video plans: narrationAudioUrl, external TTS, mixing, and security. Triggers: voiceover, TTS,
+  narration, WAV, MP3, m4a, "read the script", per-slide ttsText, mix audio before Remotion, env
+  API key for a speech provider. Does not implement a vendor SDK inside the Remotion player;
+  remo-agent does not render speech on-device.
+version: 0.2.0
+metadata:
+  project: remo-agent
 ---
 
-# Narration and TTS (remo-agent)
+# remo-agent — Narration & TTS (handoff)
 
-## Current model
+## Scope
 
-- On-screen: Remotion does **not** generate speech. It only plays an optional **one-file** full-length mix.
-- In JSON: optional top-level `narrationAudioUrl` points to that mix (remote HTTPS or local `file:` URL, depending on your Remotion/runtime setup).
-- Per slide: each slide may include `ttsText` — for **callers** (agent or scripts) to send to a TTS API, then **concat/mix** into one track in order and duration matching the plan (or re-time slides to the audio; advanced).
+- **In scope**: how `VideoPlanProps` carries **text** for TTS (`ttsText` per slide), how **one** mixed file is **played back** in the final video (`narrationAudioUrl`), and operational rules (secrets, order of operations, when to re-render).
+- **Out of scope**: writing Remotion components except noting that `VideoFromPlan` already mounts `<Audio src={narrationAudioUrl} />` when the URL is set. Implementing a specific vendor SDK in-repo is optional and not required for the skill to apply.
 
-## Suggested agent workflow
+**Contract detail**: [references/audio-contract.md](references/audio-contract.md).
 
-1. Build `VideoPlanProps` with `ttsText` on each slide (see `remo-agent-video-plan`).
-2. Call your TTS provider for each `ttsText` (or one merged script — your choice; timing is harder in one block).
-3. Mix segments to match total video duration, or adjust `durationInFrames` per slide to match segment length × fps.
-4. Upload or write the mixed file; set `narrationAudioUrl` in the final JSON.
-5. Run `remotion render` (see `remo-agent-remotion-render`).
+## When to use
 
-## Related skills
+- User wants spoken audio over a rendered video from this project.
+- User provides or asks for TTS and needs to know where to place output files in the plan.
+- Auditing whether secrets or network calls belong in the repo (they do not, except optional scripts the user adds).
 
-- **`remo-agent-video-plan`** — `ttsText` and `VideoPlanProps`
-- **`remo-agent-slide-components`** — only if you need new slide UI; not required for TTS alone
-- **`remo-agent-remotion-render`** — final MP4
+## Model (normative for this repository)
 
-## In-repo placeholder
+| Layer | Behavior |
+|-------|----------|
+| **Plan** | `ttsText?` on each slide: script for TTS, not shown on screen. |
+| **Playback** | Top-level `narrationAudioUrl?`: a **single** URL to an audio file (e.g. HTTPS or `file:`) mixed to match the full timeline. Remotion’s `<Audio>` in `VideoFromPlan` plays it. |
+| **Synthesis** | **Out of repo** by default: any TTS API the user chooses, with credentials in **environment** or a secret store—not committed files. |
 
-- No API keys, no TTS client: keep providers outside the repo to avoid secret leakage.
-- The composition plays `narrationAudioUrl` in `src/compositions/VideoFromPlan.tsx` with `<Audio src={...} />`.
+This project does **not** generate audio inside the React tree during `render` unless the user adds that capability later.
 
-## Future extension (if implemented later)
+## Workflow
 
-- Per-slide `<Audio>` inside each `Sequence` for independent clips — would require a small composition change; document here when done.
+1. **Author** `VideoPlanProps` with `ttsText` per slide (and frame durations) — `remo-agent-video-plan`.
+2. **Synthesize** audio outside Remotion: per-clip TTS, then **concat/mix** to one file whose length is consistent with the video (or re-time slides—product decision; harder).
+3. **Host or path** the mixed file: HTTPS, or a local path Remotion can resolve at render time.
+4. **Set** `narrationAudioUrl` in the final JSON; leave unset for silent output.
+5. **Render** — `remo-agent-remotion-render`.
+
+## Quality gate (audio-specific)
+
+- [ ] `narrationAudioUrl` points to a **supported** format for Remotion/FFmpeg in your stack (commonly: WAV, MP3, M4A—verify in target environment if unsure).
+- [ ] **Duration** mismatch: if audio is much shorter or longer than `sum(durationInFrames)/fps`, expect perceived sync issues; fix in the editor or the mix, not in the skill text alone.
+- [ ] **Secrets**: no API keys in JSON, skills, or committed `.env`.
+
+## Failure modes
+
+| Symptom | Likely cause | Action |
+|---------|----------------|--------|
+| No sound in MP4 | `narrationAudioUrl` missing or wrong | Set URL; re-render |
+| Error loading audio at render | URL 404, bad `file:` path, or CORS/permission | Test URL; use local path pattern Remotion supports |
+| Desync | Mix length vs sum of frame durations | Adjust mix or `durationInFrames` |
 
 ## Do not
 
-- Store service credentials in the repository or in skills.
+- Commit API keys, OAuth tokens, or long-lived credentials to the repo or to `.cursor/skills`.
+- Put TTS network calls inside `*SlideView` components (`remo-agent-slide-components`).
+
+## References
+
+| Document | Content |
+|----------|---------|
+| [references/audio-contract.md](references/audio-contract.md) | Fields and responsibilities line-by-line |
+
+## Related skills
+
+- `remo-agent-video-plan` — `ttsText` and `narrationAudioUrl` fields
+- `remo-agent-remotion-render` — produce MP4 after `narrationAudioUrl` is set
