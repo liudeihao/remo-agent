@@ -2,7 +2,7 @@ import React from "react";
 import { Img } from "remotion";
 import { SlideChrome, slideChrome } from "./SlideChrome";
 import { useSlideEntrance } from "../lib/fade";
-import type { MediaSlide } from "../types/brief";
+import type { MediaSlide } from "../types/videoPlan";
 
 export const MediaSlideView: React.FC<{ slide: MediaSlide }> = ({ slide }) => {
   const { opacity, translateY } = useSlideEntrance();

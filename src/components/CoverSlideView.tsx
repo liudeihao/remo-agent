@@ -1,7 +1,7 @@
 import React from "react";
 import { SlideChrome, slideChrome } from "./SlideChrome";
 import { useSlideEntrance } from "../lib/fade";
-import type { CoverSlide } from "../types/brief";
+import type { CoverSlide } from "../types/videoPlan";
 
 export const CoverSlideView: React.FC<{ slide: CoverSlide }> = ({ slide }) => {
   const { opacity, translateY } = useSlideEntrance();
@@ -48,9 +48,11 @@ export const CoverSlideView: React.FC<{ slide: CoverSlide }> = ({ slide }) => {
             {slide.subtitle}
           </div>
         ) : null}
-        <div style={{ marginTop: 18, fontSize: 26, color: slideChrome.accent }}>
-          INTEL BRIEF · REMOTION
-        </div>
+        {slide.brandFooter ? (
+          <div style={{ marginTop: 18, fontSize: 26, color: slideChrome.accent }}>
+            {slide.brandFooter}
+          </div>
+        ) : null}
       </div>
     </SlideChrome>
   );

@@ -1,13 +1,13 @@
 {
-  "name": "intel-brief-video",
+  "name": "remo-agent",
   "version": "0.1.0",
   "private": true,
-  "description": "JSON-driven intelligence brief video (Remotion)",
+  "description": "JSON-driven video (Remotion) + agent skills for copy, TTS, and render",
   "scripts": {
     "dev": "remotion studio",
     "build": "remotion bundle",
-    "render": "remotion render src/index.ts IntelBrief out/brief.mp4 --props=data/sample-brief.json",
-    "render:props": "remotion render src/index.ts IntelBrief"
+    "render": "remotion render src/index.ts VideoFromPlan out/video.mp4 --props=data/sample-video-plan.json",
+    "render:props": "remotion render src/index.ts VideoFromPlan"
   },
   "dependencies": {
     "react": "^18.3.1",

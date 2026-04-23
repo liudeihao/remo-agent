@@ -2,7 +2,7 @@ import React from "react";
 import { SlideChrome, slideChrome } from "./SlideChrome";
 import { useSlideEntrance } from "../lib/fade";
 import { renderLineWithHighlights } from "../lib/highlight";
-import type { BulletsSlide } from "../types/brief";
+import type { BulletsSlide } from "../types/videoPlan";
 
 const markStyle: React.CSSProperties = {
   background: "rgba(53, 184, 255, 0.18)",

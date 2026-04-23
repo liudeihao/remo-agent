@@ -1,21 +1,21 @@
-# intel-brief-video
+# remo-agent
 
-把 **AI 清洗后的结构化简报**（JSON）渲染成 **1920×1080 情报视频**：封面、要点、配图、代码片段；可选整轨旁白音频。与桌面上的 `content-pipeline-mvp`（文案/元数据批处理）互补：那边产出文字资产，这里产出视频资产。
+把 **结构化视频计划**（JSON）用 Remotion 渲染成 **可批量复用的 1920×1080 视频**：封面、要点、配图、代码块；可选整段旁白音频。本仓库的 **视频计划（VideoPlan）** 是通用数据模型，不限于「情报简报」；Agent 在合适场景下通过项目内 **Cursor skills**（`.cursor/skills/`）自主使用「写稿 →（外置 TTS）→ 出片」流程。
 
 ## 前置
 
-- Node 18+（当前环境已用 Node 22 验证类型检查）
-- 首次 `render` / `compositions` 会下载 **Chrome Headless Shell**（约百兆），需能访问外网；下载完成后会缓存，后续更快。
+- Node 18+（已用 Node 22 做类型与脚本验证）
+- 首次 `render` / studio 会下载 **Chrome Headless Shell**（约百兆），需能访问外网；会缓存
 
 ## 命令
 
 ```powershell
-cd intel-brief-video
+cd remo-agent
 npm install
 npm run dev
 ```
 
-Studio 里选 **IntelBrief**，用默认 props 或从文件加载 props 预览。
+在 Studio 里选 **VideoFromPlan**，用默认 props 或从文件加载 props。
 
 无头出片（示例 props）：
 
@@ -26,28 +26,43 @@ npm run render
 自定义 JSON：
 
 ```powershell
-npx remotion render src/index.ts IntelBrief out/my-brief.mp4 --props=path\to\brief.json
+npx remotion render src/index.ts VideoFromPlan out/my-video.mp4 --props=path\to\plan.json
 ```
 
-## JSON 约定
+## JSON / 类型约定
 
-类型定义见 `src/types/brief.ts`。最小结构：
+- 主类型：`VideoPlanProps`（`src/types/videoPlan.ts`）。
+- 顶层：`fps`、`width`、`height`（可选）、`slides[]`、可选 `narrationAudioUrl`（整段旁白，HTTPS 或 `file:`）。
+- 每页 `slide`：必有 `kind`、`durationInFrames`；可选 `ttsText`（给上游 TTS 用，成片可不内嵌 TTS）。
+- `kind`：`cover` | `bullets` | `media` | `code`（字段见类型）。
 
-- 顶层：`fps`、`width`、`height`（可选）、`slides[]`、可选 `narrationAudioUrl`（整段旁白，HTTPS 或本地文件 URL）。
-- 每页 `slide`：必有 `kind`、`durationInFrames`；可选 `ttsText`（给上游 TTS 用，成片可不处理）。
-- `kind`：`cover` | `bullets` | `media` | `code`（各字段见类型）。
+示例：`data/sample-video-plan.json`。
 
-示例数据：`data/sample-brief.json`。
+## Remotion 扩展方式（通用、可复用）
 
-## 与「抓取 → 总结」流水线怎么接
+1. 在 `src/types/videoPlan.ts` 的联合类型中增加新 `kind` 与字段。
+2. 新增 `src/components/*SlideView.tsx`，从 `src/components/index.ts` 导出。
+3. 在 `src/slideRegistry.tsx` 的 `SLIDE_CATALOG` 与 `renderSlideContent` 中登记（否则 TypeScript 在 `assertNever` 处报错）。
 
-1. Agent 输出符合上述类型的 JSON（或先写入 `out/brief-2026-04-22.json`）。
-2. 定时任务调用 `remotion render ... --props=...` 得到 MP4。
-3. TTS：用各 slide 的 `ttsText` 在片外合成一条音轨，把最终 URL 填进 `narrationAudioUrl` 再渲染；或后续改为按 Sequence 分段 `Audio`（可再迭代）。
-4. 分发：沿用各平台开放接口/工具；本仓库不内置上传密钥。
+同一套组件可被多个 Composition 复用；当前主 Composition 为 `VideoFromPlan`。
+
+## Agent skills
+
+本仓库在 `.cursor/skills/` 下提供项目级 **Agent Skills**（`SKILL.md`），便于在「需要出片 / 需要旁白 / 需要符合 schema 的 JSON」时自动套用：
+
+- `remo-agent-video-plan` — 视频计划 JSON 与字段说明
+- `remo-agent-remotion-render` — 本地 `remotion` 渲染与 Studio
+- `remo-agent-narration-tts` — `ttsText` 与 `narrationAudioUrl` 的衔接方式
 
 ## 目录
 
-- `src/compositions/IntelBrief.tsx` — 主 Composition，按 `Sequence` 拼页。
-- `src/components/*` — 各页视觉。
-- `data/sample-brief.json` — 可渲染的完整示例。
+- `src/compositions/VideoFromPlan.tsx` — 主 Composition（按 `Sequence` 拼页 + 可选整轨 `Audio`）
+- `src/slideRegistry.tsx` — 幻灯片索引（`SLIDE_CATALOG`）与 `renderSlideContent`
+- `src/components/*` — 各页视觉与 `index.ts` 总导出
+- `data/sample-video-plan.json` — 可渲染的完整示例
+
+## 与上游「文案 / TTS」的衔接
+
+1. Agent 或脚本产出符合 `VideoPlanProps` 的 JSON。
+2. 在片外对每页 `ttsText` 做 TTS，混成单文件后把 URL 写入 `narrationAudioUrl`，再 `remotion render`。
+3. 分发、上传、密钥不放在本仓库。

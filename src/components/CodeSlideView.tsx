@@ -2,7 +2,7 @@ import React from "react";
 import { SlideChrome, slideChrome } from "./SlideChrome";
 import { useSlideEntrance } from "../lib/fade";
 import { highlightPatternsInCode } from "../lib/highlight";
-import type { CodeSlide } from "../types/brief";
+import type { CodeSlide } from "../types/videoPlan";
 
 export const CodeSlideView: React.FC<{
   slide: CodeSlide;

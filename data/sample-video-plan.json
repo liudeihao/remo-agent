@@ -6,10 +6,11 @@
     {
       "kind": "cover",
       "durationInFrames": 90,
-      "title": "开发者情报 · 每日摘要",
-      "subtitle": "抓取 → 清洗 → JSON → 成片 → 分发",
+      "title": "开发者简报 · 每日摘要",
+      "subtitle": "结构化 JSON → Remotion 成片",
       "periodLabel": "2026-04-22",
-      "ttsText": "欢迎收看开发者情报每日摘要。四月二十二日。"
+      "brandFooter": "REMO AGENT · REMOTION",
+      "ttsText": "欢迎收看开发者简报每日摘要。四月二十二日。"
     },
     {
       "kind": "bullets",
@@ -27,7 +28,7 @@
       "kind": "media",
       "durationInFrames": 105,
       "headline": "配图位：远程 URL 会在渲染时拉取",
-      "imageUrl": "https://picsum.photos/seed/intel-brief/1600/900",
+      "imageUrl": "https://picsum.photos/seed/remo-agent/1600/900",
       "caption": "生产环境建议改为自有 CDN 或对象存储链接。",
       "ttsText": "这一页演示远程配图在渲染时拉取。"
     },
@@ -36,8 +37,8 @@
       "durationInFrames": 120,
       "headline": "示例：渲染命令（本地 JSON 作为 props）",
       "language": "bash",
-      "code": "npm run render\n# 等价：remotion render src/index.ts IntelBrief out/brief.mp4 --props=data/sample-brief.json",
-      "highlights": ["remotion", "IntelBrief", "sample-brief.json"],
+      "code": "npm run render\n# 等价：remotion render src/index.ts VideoFromPlan out/video.mp4 --props=data/sample-video-plan.json",
+      "highlights": ["remotion", "VideoFromPlan", "sample-video-plan.json"],
       "ttsText": "用 Remotion CLI 把 JSON props 渲染成 MP4。"
     }
   ]

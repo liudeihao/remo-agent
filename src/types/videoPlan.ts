@@ -9,6 +9,8 @@ export type CoverSlide = SlideBase & {
   title: string;
   subtitle?: string;
   periodLabel?: string;
+  /** Small footer line (e.g. show name). Omitted = no footer line. */
+  brandFooter?: string;
 };
 
 export type BulletsSlide = SlideBase & {
@@ -36,18 +38,22 @@ export type CodeSlide = SlideBase & {
   highlights?: string[];
 };
 
-export type BriefSlide = CoverSlide | BulletsSlide | MediaSlide | CodeSlide;
+export type PlanSlide = CoverSlide | BulletsSlide | MediaSlide | CodeSlide;
 
-export type IntelBriefProps = {
+/** Discriminator union tag for registered slide renderers. */
+export type SlideKind = PlanSlide["kind"];
+
+/** JSON props for multi-slide videos (slide registry in `src/slideRegistry.tsx`). */
+export type VideoPlanProps = {
   fps?: number;
   width?: number;
   height?: number;
   /** Full mix narration (e.g. WAV from your TTS job). Remote HTTPS OK at render time. */
   narrationAudioUrl?: string;
-  slides: BriefSlide[];
+  slides: PlanSlide[];
 };
 
-export const defaultBriefProps: IntelBriefProps = {
+export const defaultVideoPlanProps: VideoPlanProps = {
   fps: 30,
   width: 1920,
   height: 1080,
@@ -55,8 +61,8 @@ export const defaultBriefProps: IntelBriefProps = {
     {
       kind: "cover",
       durationInFrames: 90,
-      title: "情报简报",
-      subtitle: "在 props 里替换为真实标题",
+      title: "视频标题",
+      subtitle: "在 props 中替换为真实内容",
       periodLabel: "DEMO",
     },
   ],
